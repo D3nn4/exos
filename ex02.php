@@ -4,7 +4,7 @@
 while (true){
 	fwrite(STDOUT, "Entrez un nombre: ");
 	$entry = substr(fgets(STDIN), 0,-1);
-	if ($entry == false){
+	if ($entry === false){
 		echo "\n";
 		break;
 	}
