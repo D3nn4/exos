@@ -7,6 +7,11 @@ void	ft_putchar(char c)
 
 void ft_putnbr(nb)
 {
+	if (nb < 0){
+		nb = nb * -1;
+		ft_putchar('-');
+
+	}
 	int mult = 10;
 	int res = nb;
 	int last_nb = nb;
@@ -30,7 +35,7 @@ void ft_putnbr(nb)
 
 int 	main()
 {
-	ft_putnbr(123456789);
+	ft_putnbr(-123456789);
 	write(1, "\n", 1);
 	return (0);
 }
