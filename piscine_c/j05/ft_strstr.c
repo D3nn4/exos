@@ -1,6 +1,6 @@
-#include <unistd.h>
+/*#include <unistd.h>
 #include "../ft_putchar.c"
-#include "../ft_putstr.c"
+#include "../ft_putstr.c"*/
 
 char *ft_strstr(char *str, char *to_find)
 {
@@ -14,23 +14,23 @@ char *ft_strstr(char *str, char *to_find)
 					index++;
 				}
 			}
-			if (str[index] == to_find[j]){
-				return (&str[i]);
+			if (str[index - 1] == to_find[j - 1]){
+				return (str + i);
 			}
 			else
 				index = 0;
 		}	
 	}
+	return NULL;
 }
 
-int main ()
+/*int main ()
 {
 	char string[] = "Coucou les amis";
 	char to_find[] = "les";
 	
 	ft_putstr(ft_strstr(string, to_find));
-	
+	ft_putchar('\n');
 
-
-	return (0);
-}
+	return 0;
+}*/
