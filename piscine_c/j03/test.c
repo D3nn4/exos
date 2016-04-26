@@ -16,4 +16,8 @@ ft_putchar('\n');
 ft_putnbr(b - '0');
 ft_putchar('\n');
 
+
+	char a = '5';
+	int b = a - '0';
+
 }

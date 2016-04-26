@@ -22,10 +22,8 @@ void	ft_sort_integer_table(int *tab, int size)
 			tab[index] = tab[index + 1];
 			tab[index + 1] = a;
 			index = 0;
-		}
-		
+		}	
 	}
-
 }
 
 int		main ()

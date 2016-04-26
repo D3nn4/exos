@@ -23,6 +23,15 @@ int ft_recursive_factorial(int nb)
 	}
 }
 
+int ft_recursive_factorial2(int n)
+{
+	if (nb == 0)
+		return 0;
+	if (nb == 1)
+		return 1;
+	return n * ft_recursive_factorial2(n - 1);
+}
+
 int main()
 {
 	ft_putnbr(ft_recursive_factorial(10));

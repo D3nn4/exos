@@ -28,15 +28,3 @@ char *ft_concat_params(int argc, char **argv)
 	}
 	return NULL;
 }
-
-int main (int argc, char **argv)
-{
-	char *pt_str;
-	int i;
-
-	pt_str = ft_concat_params(argc,argv);
-	if (pt_str != NULL)
-		ft_putstr(pt_str);
-	free(pt_str);
-	return 0;
-}
