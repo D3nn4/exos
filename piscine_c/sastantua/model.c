@@ -1,104 +1,122 @@
 #include "../lib/ft.h"
 
-void		ft_putchar(char c);
-
-void	write_door(int *i, int *width_door, int space, int s_door)
+int		ft_nb_tot_line(int *size)
 {
-	int	position_key;
+	int no_floor;
+	int nb_tot_line;
 
-	position_key = s_door / 2;
-	if ((space == position_key) && (*width_door == (s_door / 2) - 1)
-		&& (s_door > 3))
-		ft_putchar('$');
-	else
-		ft_putchar('|');
-	*i = *i + 1;
-	*width_door = *width_door + 1;
-}
-int		write_line(int line_nb, int space, int size_door)
-{
-	int	i;
-	int	z;
-	int	width_door;
-
-	width_door = -size_door / 2;
-	z = 0;
-	i = 0;
-	while (i < space)
+	no_floor = 1;
+	nb_tot_line = 0;
+	while (no_floor <= *size)
 	{
-		ft_putchar(' ');
-		i++;
+		nb_tot_line += no_floor + 2;
+		no_floor++;
 	}
-	ft_putchar('/');
-	i = 0;
-	while (i <= line_nb * 2)
-	{
-		while ((i == line_nb + width_door) && (space < size_door)
-			&& (width_door <= size_door / 2))
-			write_door(&i, &width_door, space, size_door);
-		ft_putchar('*');
-		i = i + 1;
-	}
-	ft_putchar('\\');
-	ft_putchar('\n');
-	return (space - 1);
+	return (nb_tot_line);
 }
 
-void	print_pyramid(int space, int nb_jumps, int line_jump, int size_door)
+int		ft_nb_tot_space(int *size)
 {
-	int	i;
-	int	condition_inc_nb_jumps;
-	int	var_jump;
+	int nb_floor_spec_space;
+	int nb_tot_space;
+	int no_floor;
 
-	i = 0;
-	var_jump = 4;
-	condition_inc_nb_jumps = 1;
-	while (space + 1)
+	no_floor = 1;
+	nb_floor_spec_space = 0;
+	nb_tot_space = ft_nb_tot_line(size);
+	while (no_floor <= *size)
 	{
-		if (i == line_jump)
-		{
-			i += nb_jumps;
-			space -= nb_jumps;
-			line_jump = i + var_jump;
-			var_jump++;
-			if (condition_inc_nb_jumps == 2)
-			{
-				nb_jumps++;
-				condition_inc_nb_jumps = 0;
-			}
-			condition_inc_nb_jumps++;
-		}
-		space = write_line(i, space, size_door);
-		i = i + 1;
+		nb_floor_spec_space = (2 + ((no_floor + 2) / 2) * 2) / 2;
+		nb_tot_space += nb_floor_spec_space - 1;
+		no_floor++;
 	}
+	nb_tot_space -= 1;
+	return (nb_tot_space);
 }
 
 void	sastantua(int size)
 {
-	int	space;
-	int	nb_jumps;
-	int	line_jump;
-	int	i;
-	int	z;
+	int no_floor;
+	int no_line_floor;
+	int nb_line_floor;
+	int nb_space;
+	int nb_space_to_do;
+	int nb_star;
+	int nb_star_to_do;
+	int nb_pipe_to_do;
+	int size_door;
+	int no_door_line;
+	int no_door_handle_line;
 
-	i = 1;
-	z = 0;
-	nb_jumps = 2;
-	line_jump = 3;
-	if (size > 0)
+	no_floor = 1;
+	nb_space = ft_nb_tot_space(&size);
+	nb_star = -1;
+	size_door = (size - 1) / 2 * 2 + 1;
+	while (no_floor <= size)
 	{
-		while (i <= size)
+		no_line_floor = 1;
+		nb_line_floor = no_floor + 2;
+		nb_space -= ((2 + ((no_floor + 2) / 2) * 2) / 2) - 1;
+		nb_star += ((2 + ((no_floor + 2) / 2)) * 2) - 4;
+		while (no_line_floor <= nb_line_floor)
 		{
-			space = space + 6 + z;
-			if (i > 1)
-				z = z + 1;
-			if ((i > 1) && (i % 2))
-				z = z + 1;
-			i++;
+			nb_space_to_do = nb_space;
+			while (nb_space_to_do > 0)
+			{
+				ft_putchar(' ');
+				nb_space_to_do--;
+			}
+			nb_space--;
+			ft_putchar(47);
+			nb_star_to_do = nb_star;
+			if (no_floor != size || (no_floor == size && no_line_floor < no_door_line))
+			{
+				while (nb_star_to_do > 0)
+				{
+					ft_putchar('*');
+					nb_star_to_do--;
+				}
+			}
+			else
+			{
+				if (no_floor == size && no_line_floor >= no_door_line)
+				{
+					nb_star_to_do = (nb_star - size_door) / 2;
+					while (nb_star_to_do > 0)
+					{
+						ft_putchar('*');
+						nb_star_to_do--;
+					}
+					if (no_line_floor == no_door_handle_line && size > 4)
+						nb_pipe_to_do = size_door -2;
+					else
+						nb_pipe_to_do = size_door;
+					while (nb_pipe_to_do > 0)
+					{
+						ft_putchar('|');
+						nb_pipe_to_do--;
+					}
+					if (no_line_floor == no_door_handle_line && size > 4)
+					{
+						ft_putchar('$');
+						ft_putchar('|');
+					}
+					nb_star_to_do = (nb_star - size_door) / 2;
+					while (nb_star_to_do > 0)
+					{
+						ft_putchar('*');
+						nb_star_to_do--;
+					}
+				}
+			}
+			ft_putchar(92);
+			nb_star += 2;
+			no_line_floor++;
+			ft_putchar('\n');
+			no_door_line = nb_line_floor - size_door + 1;
+			no_door_handle_line = no_door_line + size_door / 2;
 		}
-		if (!(size % 2))
-			size = size - 1;
-		print_pyramid(space - 4, nb_jumps, line_jump, size);
+		no_floor++;
 	}
 }
 
@@ -106,7 +124,7 @@ int main()
 {
 	sastantua(1);
 	ft_putchar('\n');
-	/*sastantua(2);
+	sastantua(2);
 	ft_putchar('\n');
 	sastantua(3);
 	ft_putchar('\n');
@@ -117,7 +135,7 @@ int main()
 	sastantua(6);
 	ft_putchar('\n');
 	sastantua(7);
-	ft_putchar('\n');*/
+	ft_putchar('\n');
 
 	return 0;
 }
