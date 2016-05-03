@@ -12,5 +12,6 @@ void ft_putchar(char c);
 void ft_putnbr(int nb);
 void ft_putstr( char *str);
 void ft_swap(int *a, int *b);
+int	ft_atoi(char *str);
 
 #endif
