@@ -26,26 +26,3 @@ void ft_list_reverse(t_list **begin_list)
 	new_current->next = NULL;
 	(*begin_list)->next = new_begin_list->next;
 }
-
-int main()
-{
-	t_list *liste = ft_create_elem("toto");
-
-	ft_list_push_front(&liste, "tata");
-	ft_list_push_front(&liste, "titi");
-
-  if (liste == NULL)
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    t_list *actuel = liste->next;
-
-    while (actuel != NULL)
-    {
-        printf("%s -> ", actuel->data);
-        actuel = actuel->next;
-    }
-    printf("NULL\n");
-
-}

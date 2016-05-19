@@ -1,8 +1,8 @@
 NAME = libft.a
 
-SOURCE = ft_*.c
+SOURCE = ./includes/*.c
 
-HEADER = ft_list.h
+HEADER = ./includes/ft_list.h
 
 
 all : $(NAME)

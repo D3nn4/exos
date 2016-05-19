@@ -10,12 +10,3 @@ t_list *ft_create_elem(void *data)
 	}
 	return new_list;
 }
-
-int main ()
-{
-	t_list *liste = ft_create_elem("toto");
-	ft_putstr((liste->data));
-	ft_putchar('\n');
-
-	return 0;
-}
