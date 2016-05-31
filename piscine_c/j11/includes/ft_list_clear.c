@@ -2,13 +2,17 @@
 
 void ft_list_clear(t_list **begin_list)
 {
-	if(begin_list == NULL)
+	if(begin_list == NULL){
+		printf("empty list\n");
 		return;
+	}
 	t_list *to_clear;
-	while((*begin_list)->next){
-		to_clear = (*begin_list)->next;
-		(*begin_list)->next = to_clear->next;
+	t_list *list;
+	list = *begin_list;
+	while(list){
+		to_clear = list;
+		list = list->next;
 		free(to_clear);
 	}
-	free(begin_list);
+	*begin_list = NULL;
 }
