@@ -7,8 +7,8 @@ HEADER = ./includes/header.h
 all : $(NAME)
 
 $(NAME) :
-	gcc -c $(SRC)
-	gcc -ggdb3 -Wall -Wextra -Werror -o $(NAME) $(HEADER) *.o
+	gcc -ggdb3 -Wall -Wextra -c $(SRC)
+	gcc -o $(NAME) $(HEADER) *.o
 
 clean :
 	rm -f *.o
