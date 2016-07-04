@@ -101,12 +101,21 @@ void fillit (char *av)
 		printf("fillit : close2() failed.\n");
 		return ;
 	}
+	t_offset *tab_form;
+	tab_form = malloc(sizeof(*tab_form) * size);
 	
-	checkAll(tab_tetriminos, size);
+	checkAll(tab_tetriminos, size, tab_form);
 
 	////////
-	//print_tab(tab_tetriminos, size);
-	printf("%d\n", size);
+	int nbr = 0;
+	while (nbr < size){
+		printf("%s\n",tab_form[nbr].str );
+		nbr++;
+	}
+
+	
+	
+	printf("nb de tetrominos : %d\n", size);
 
 }
 

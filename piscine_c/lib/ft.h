@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdio.h>
 
 #ifndef __FT_H__
 #define __FT_H__
