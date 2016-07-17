@@ -1,7 +1,9 @@
 #include "header.h"
 #include "ft.h"
 
-static int number = 0;
+//static int number = 0;
+
+
 
 void printSimpleLs (t_list *list)
 {
@@ -13,26 +15,58 @@ void printSimpleLs (t_list *list)
 	}
 }
 
+char *allInMin (char *string, int size)
+{
+	char *string_min;
+	string_min = malloc(sizeof(string_min) * size + 1);
+	if (string_min == NULL){
+		printf("error\n");
+		return NULL;
+	}
+	int i;
+	int maj_to_min = 32;
+	for (i = 0; i < size; i++){
+		if ('A' <= string[i] && string[i] <= 'Z')
+			string_min[i] = string[i] + maj_to_min;
+		else
+			string_min[i] = string[i];
+	}
+	string_min[size] = '\0';
+	// DEBUG
+	//printf("%s -> %s\n", string, string_min);
+	return string_min;
+}
+
+int compare (char *name1, char *name2)
+{
+	int size1 = strlen(name1);
+	int size2 = strlen(name2);
+	int comp;
+	char *min_name1;
+	char *min_name2;
+	min_name1 = allInMin(name1, size1);
+	min_name2 = allInMin(name2, size2);
+	comp = strcmp(min_name1, min_name2);
+	free(min_name1);
+	free(min_name2);
+	return comp;
+
+}
+
 t_list *findPlace (t_list *to_sort, t_list *list)
 {
-	/*  POUR MON DEBUGGAGE NE FAIT PAS PARTIE DU CODE
-	printf("findPlace : to_sort : %s\n", to_sort->element->d_name);
-	printf("%d\n", number);
-	number++;
-	printSimpleLs(list);
-	*/
 	t_list *first = list;
 	t_list *temp_current = list;
 	t_list *temp_next = list->next_element;
 	while (to_sort){
-		if (strcmp(to_sort->element->d_name, temp_current->element->d_name) == 1 
+		if (compare(to_sort->element->d_name, temp_current->element->d_name) == 1 
 			&& temp_next == NULL){
 			temp_current->next_element = to_sort;
 			to_sort->next_element = NULL;
 			break;
 		}
-		if (strcmp(to_sort->element->d_name, temp_current->element->d_name) == 1 
-			&& strcmp(temp_next->element->d_name, to_sort->element->d_name) == 1){
+		if (compare(to_sort->element->d_name, temp_current->element->d_name) == 1 
+			&& compare(temp_next->element->d_name, to_sort->element->d_name) == 1){
 			to_sort->next_element = temp_next;
 			temp_current->next_element = to_sort;
 			break;
@@ -53,7 +87,7 @@ t_list *sortList (t_list *list)
 	t_list *to_sort = NULL;
 	
 	while (temp_next){
-		if (strcmp(temp_current->element->d_name, temp_next->element->d_name) == 1){
+		if (compare(temp_current->element->d_name, temp_next->element->d_name) == 1){
 			to_sort = temp_current;
 			if (temp_previous == NULL)
 				first = temp_next;
@@ -90,22 +124,32 @@ t_list *structList (DIR *dir, t_list *begin_list)
 		temp_current->next_element = temp_next;
 		temp_current = temp_next;
 	}
-	printSimpleLs(begin_list);
-	printf("\n\n\n");
+	//  DEBBUG
+	//printSimpleLs(begin_list);
+	//printf("\n\n\n");
 	return sortList (begin_list);
 }
 
 
 
-void ft_ls (char *av)
+void ft_ls (char **av, int ac)
 {
 	DIR *dir;
 	t_list *entry_list;
 	entry_list = malloc(sizeof(entry_list));
 	entry_list->element = NULL;
 	entry_list->next_element = NULL;
-	dir = opendir(av);
+	dir = opendir(av[1]);
 	entry_list = structList(dir, entry_list);
+	if ((ac > 2)){
+		int i;
+		for (i = 1; i < ac; i++){
+			if (av[i] == "-R"){
+				reverseList(entry_list);
+			}
+		}
+	}
+
 	
 
 	printSimpleLs(entry_list);
@@ -115,10 +159,10 @@ void ft_ls (char *av)
 
 int main (int argc, char **argv)
 {	
-	if (argc != 2){
+	if (argc < 2){
 		return 1;
 	}
-	ft_ls(argv[1]);
+	ft_ls(argv, argc);
 
 
 
