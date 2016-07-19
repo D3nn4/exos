@@ -130,7 +130,24 @@ t_list *structList (DIR *dir, t_list *begin_list)
 	return sortList (begin_list);
 }
 
+t_list *reverseList (t_list *list)
+{
+	if (list->next_element == NULL)
+		return list;
+	t_list *new_list = NULL;
+	while (list){
+		t_list *temp_next = list->next_element;
+		list->next_element = new_list;
+		new_list = list;
+		list = temp_next;
+	}
+	return new_list;
+}
 
+t_list *recursiveList (t_list)
+{
+
+}
 
 void ft_ls (char **av, int ac)
 {
@@ -139,14 +156,15 @@ void ft_ls (char **av, int ac)
 	entry_list = malloc(sizeof(entry_list));
 	entry_list->element = NULL;
 	entry_list->next_element = NULL;
-	dir = opendir(av[1]);
+	dir = opendir(av[ac - 1]);
 	entry_list = structList(dir, entry_list);
 	if ((ac > 2)){
 		int i;
 		for (i = 1; i < ac; i++){
-			if (av[i] == "-R"){
-				reverseList(entry_list);
-			}
+			if (strcmp(av[i], "-r") == 0)
+				entry_list = reverseList(entry_list);
+			if (strcmp(av[i], "-R") == 0)
+				recursiveList(entry_list);
 		}
 	}
 
