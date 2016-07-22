@@ -7,13 +7,19 @@
 
 void printSimpleLs (t_list *list)
 {
-
+	if (list == NULL){
+		printf("\n");
+		return;
+	}
 	while (list){
 		if (strncmp(list->element->d_name, ".", 1) != 0)
 			printf("%s\n", list->element->d_name);
 		list = list->next_element;
 	}
+
 }
+
+
 
 char *allInMin (char *string, int size)
 {
@@ -32,8 +38,6 @@ char *allInMin (char *string, int size)
 			string_min[i] = string[i];
 	}
 	string_min[size] = '\0';
-	// DEBUG
-	//printf("%s -> %s\n", string, string_min);
 	return string_min;
 }
 
@@ -124,10 +128,23 @@ t_list *structList (DIR *dir, t_list *begin_list)
 		temp_current->next_element = temp_next;
 		temp_current = temp_next;
 	}
-	//  DEBBUG
-	//printSimpleLs(begin_list);
-	//printf("\n\n\n");
 	return sortList (begin_list);
+}
+
+t_list *createList (char *folder)
+{
+	DIR *dir;
+	t_list *entry_list;
+	entry_list = malloc(sizeof(entry_list));
+	entry_list->element = NULL;
+	entry_list->next_element = NULL;
+	dir = opendir(av[ac - 1]);
+	if (dir == NULL)
+		return NULL;
+	entry_list = structList(dir, entry_list);
+	closedir(dir);
+	return entry_list;
+
 }
 
 t_list *reverseList (t_list *list)
@@ -144,35 +161,101 @@ t_list *reverseList (t_list *list)
 	return new_list;
 }
 
-t_list *recursiveList (t_list)
+t_stack *popStack (t_stack *stack)
+{	
+	t_element *to_remove;
+	to_remove = stack->first_element;
+	stack->first_element = stack->first_element->next;
+	free(to_remove->path_name);
+	free(to_remove->next);
+	free(to_remove);
+	return stack;
+}
+
+t_stack *pushStack (t_stack *stack, char *folder_name)
+{	
+	t_element *current_element;
+	current_element->path_name = '\0';
+	current_element->next = NULL;
+	current_element->path_name = malloc(sizeof(folder_name) * strlen(folder_name));
+	current_element->path_name = strcpy(current_element->path_name, folder_name);
+	current_element->next = stack->first_element;
+	stack->first_element = current_element;
+	return stack;
+}
+
+
+void  RecursiveLs(t_stack *stack)
 {
+	char *current_folder;
+	while (stack->first_element){
+		current_folder = stack->first_element->path_name;
+		printf("%s\n", current_folder);
+		printSimpleLs (createList (current_folder));
+
+
+	}
+
+	return;
+
+	
 
 }
 
-void ft_ls (char **av, int ac)
+
+void ftLsOption (t_list *entry_list, char **av, int ac, t_stack *stack)
 {
-	DIR *dir;
-	t_list *entry_list;
-	entry_list = malloc(sizeof(entry_list));
-	entry_list->element = NULL;
-	entry_list->next_element = NULL;
-	dir = opendir(av[ac - 1]);
-	entry_list = structList(dir, entry_list);
-	if ((ac > 2)){
-		int i;
-		for (i = 1; i < ac; i++){
-			if (strcmp(av[i], "-r") == 0)
-				entry_list = reverseList(entry_list);
-			if (strcmp(av[i], "-R") == 0)
-				recursiveList(entry_list);
+	bool recu = false;
+	
+	int i;
+	for (i = 1; i < ac; i++){
+		if (strcmp(av[i], "-r") == 0)
+			entry_list = reverseList(entry_list);
+		if (strcmp(av[i], "-R") == 0){
+			recu = true;
 		}
 	}
-
+	if ((recu = false))
+		printSimpleLs(entry_list);
 	
-
-	printSimpleLs(entry_list);
+	else
+		RecursiveLs (entry_list, stack);
 	
-	closedir(dir);
+}
+
+t_stack *createStack (char *av)
+{
+	t_stack *stack;
+	stack->first_element = NULL;
+	t_element *origin_folder;
+	origin_folder->path_name = '\0';
+	origin_folder->next = NULL;
+	origin_folder->path_name = malloc(sizeof(*av) * strlen(av));
+	if (origin_folder == NULL)
+		return NULL;
+	origin_folder->path_name = strcpy(origin_folder->path_name, av);
+	stack->first_element = origin_folder;
+	return stack;
+}
+
+
+
+void ftLs (char **av, int ac)
+{
+	t_stack *stack;
+	stack = createStack(av[ac - 1]);
+	if (stack == NULL) {
+		printf("error creation stack\n");
+		return;
+	}
+	t_list *entry_list;
+	entry_list = createList(av[ac - 1]);
+	if ((entry_list == NULL))
+		return;	
+	if ((ac > 2))
+		ftLsOption(entry_list, av, ac, stack);
+	else 
+		printSimpleLs(entry_list);
 }
 
 int main (int argc, char **argv)
@@ -180,7 +263,7 @@ int main (int argc, char **argv)
 	if (argc < 2){
 		return 1;
 	}
-	ft_ls(argv, argc);
+	ftLs(argv, argc);
 
 
 
