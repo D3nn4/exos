@@ -119,8 +119,10 @@ t_list *createList (char *folder)
 	entry_list->element = NULL;
 	entry_list->next_element = NULL;
 	dir = opendir(folder);
-	if (dir == NULL)
+	if (dir == NULL){
+		printf("ERROR OPENDIR %s\n", folder);
 		return NULL;
+	}
 	entry_list = structList(dir, entry_list);
 	
 	return entry_list;

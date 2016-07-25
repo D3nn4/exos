@@ -36,6 +36,12 @@ t_list *reverseList (t_list *list);
 t_stack *popStack (t_stack *stack);
 t_stack *pushStack (t_stack *stack, char *folder_name);
 t_stack *createStack (char *av);
+void printSimpleLs (t_list *list);
+char * ft_realloc(char* str, int strSize, int newSize);
+char *line_creation( int current_len, int next_len, char *next_folder, char *current_folder);
+void  RecursiveLs(t_stack *stack);
+void ftLsOption (t_list *entry_list, char **av, int ac, t_stack *stack);
+void ftLs (char **av, int ac);
 
 
 

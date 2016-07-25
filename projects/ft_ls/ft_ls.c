@@ -53,24 +53,27 @@ void  RecursiveLs(t_stack *stack)
 	current_list = malloc(sizeof(*current_list));	
 	while (stack->first_element){
 		current_folder = strcpy (current_folder, stack->first_element->path_name);
-		popStack (stack);
+		
 		printf("%s:\n", current_folder);
 		current_list = createList (current_folder);
 		printSimpleLs (current_list);
+		popStack (stack);
 		while (current_list){
 			char *file_name = current_list->element->d_name;
 			if (current_list->element->d_type == DT_DIR
 				&& strcmp(file_name, ".") != 0
 				&& strcmp (file_name, "..") != 0){
+				printf("\n");
 				char *new_path = NULL;
 				new_path = current_folder;
-				printf("current_folder : %s\n", current_folder);
-				printf("new_path : %s\n", new_path);
+				//printf("current_folder : %s\n", current_folder);
+				//printf("new_path : %s\n", new_path);
+				new_path = line_creation (strlen (new_path), 1, "/", new_path);
 				new_path = line_creation(strlen(new_path), strlen(file_name),
 								file_name, new_path);
-				new_path = line_creation (strlen (new_path), 1, "/", new_path);
+				
 				stack = pushStack(stack, new_path);
-				printf("new_path modified : %s\n", new_path);
+				//printf("new_path modified : %s\n", new_path);
 				
 			}
 			current_list = current_list->next_element;
@@ -78,7 +81,6 @@ void  RecursiveLs(t_stack *stack)
 	}
 	return;
 }
-
 
 void ftLsOption (t_list *entry_list, char **av, int ac, t_stack *stack)
 {
@@ -99,11 +101,6 @@ void ftLsOption (t_list *entry_list, char **av, int ac, t_stack *stack)
 		RecursiveLs (stack);
 	
 }
-
-
-
-
-
 
 void ftLs (char **av, int ac)
 {
