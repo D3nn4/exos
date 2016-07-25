@@ -25,4 +25,18 @@ typedef struct  s_element {
 typedef struct  s_stack {
 	t_element *first_element;
 }				t_stack;
+
+char *allInMin (char *string, int size);
+int compare (char *name1, char *name2);
+t_list *findPlace (t_list *to_sort, t_list *list);
+t_list *sortList (t_list *list);
+t_list *structList (DIR *dir, t_list *begin_list);
+t_list *createList (char *folder);
+t_list *reverseList (t_list *list);
+t_stack *popStack (t_stack *stack);
+t_stack *pushStack (t_stack *stack, char *folder_name);
+t_stack *createStack (char *av);
+
+
+
 #endif
