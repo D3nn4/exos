@@ -14,71 +14,41 @@ void printSimpleLs (t_list *list)
 	}
 }
 
-char * ft_realloc(char* str, int strSize, int newSize)
-{
-	char *ptr;
-	if (newSize == 0)
-		return NULL;
-	ptr = malloc(sizeof(*ptr) * newSize + 1);
-	if (ptr == NULL){
-		return NULL;
-	}
-	int i = 0;
-	for (; i < strSize; i++){
-		ptr[i] = str[i];
-	}
-	while (i < newSize){
-		ptr[i] = '\0';
-		i++;
-	}
-	
-	free(str);
-	return ptr;
-}
-
-char *line_creation( int current_len, int next_len, char *next_folder, char *current_folder)
-{
-	current_folder = ft_realloc(current_folder, current_len, current_len + next_len);
-	strncpy(current_folder + current_len, next_folder, next_len);
-	return current_folder;
-}
-
 void  RecursiveLs(t_stack *stack)
 {
-	char *current_folder;
-	
-	current_folder = malloc(sizeof(*current_folder) * strlen (stack->first_element->path_name) + 1);
-	current_folder[0] = '\0';
+	char *current_folder = NULL;
 	t_list *current_list;
 	current_list = malloc(sizeof(*current_list));	
 	while (stack->first_element){
+		current_folder = malloc(sizeof(*current_folder) * strlen(stack->first_element->path_name) + 1);
 		current_folder = strcpy (current_folder, stack->first_element->path_name);
-		
 		printf("%s:\n", current_folder);
 		current_list = createList (current_folder);
 		printSimpleLs (current_list);
+
 		popStack (stack);
+		printf("\n");
 		while (current_list){
 			char *file_name = current_list->element->d_name;
 			if (current_list->element->d_type == DT_DIR
 				&& strcmp(file_name, ".") != 0
 				&& strcmp (file_name, "..") != 0){
-				printf("\n");
-				char *new_path = NULL;
-				new_path = current_folder;
-				//printf("current_folder : %s\n", current_folder);
-				//printf("new_path : %s\n", new_path);
-				new_path = line_creation (strlen (new_path), 1, "/", new_path);
-				new_path = line_creation(strlen(new_path), strlen(file_name),
-								file_name, new_path);
 				
+				char *new_path = NULL;   
+				new_path = malloc(sizeof(*new_path) * (strlen(current_folder) + 1 + strlen(file_name) + 1));
+				strcpy(new_path, current_folder);
+				strcat(new_path, "/");
+				strcat(new_path, file_name);				
 				stack = pushStack(stack, new_path);
-				//printf("new_path modified : %s\n", new_path);
-				
 			}
+
 			current_list = current_list->next_element;
 		}
 	}
+	free(current_folder);
+	free(current_list);
+	current_folder = NULL;
+	current_list = NULL;
 	return;
 }
 
@@ -112,8 +82,10 @@ void ftLs (char **av, int ac)
 	}
 	t_list *entry_list;
 	entry_list = createList(av[ac - 1]);
-	if ((entry_list == NULL))
+	if ((entry_list == NULL)){
+		printf("DIRECTORY %s DOESN EXIST\n", av[ac - 1]);
 		return;	
+	}
 	if ((ac > 2))
 		ftLsOption(entry_list, av, ac, stack);
 	else 

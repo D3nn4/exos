@@ -31,8 +31,8 @@ int compare (char *name1, char *name2)
 	min_name1 = allInMin(name1, size1);
 	min_name2 = allInMin(name2, size2);
 	comp = strcmp(min_name1, min_name2);
-	free(min_name1);
-	free(min_name2);
+	//free(min_name1);
+	//free(min_name2);
 	return comp;
 
 }
@@ -124,6 +124,7 @@ t_list *createList (char *folder)
 		return NULL;
 	}
 	entry_list = structList(dir, entry_list);
+	//closedir(dir);
 	
 	return entry_list;
 

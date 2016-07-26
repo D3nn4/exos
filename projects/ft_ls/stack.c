@@ -3,12 +3,13 @@
 
 t_stack *popStack (t_stack *stack)
 {	
-	//t_element *to_remove;
-	//to_remove = stack->first_element;
+	t_element *to_remove;
+	to_remove = stack->first_element;
 	stack->first_element = stack->first_element->next;
-	//free(to_remove->path_name);
-	//free(to_remove->next);
-	//free(to_remove);
+	free(to_remove->path_name);
+	to_remove->next = NULL;
+	free(to_remove);
+	to_remove = NULL;
 	return stack;
 
 
@@ -18,8 +19,6 @@ t_stack *pushStack (t_stack *stack, char *folder_name)
 {	
 	t_element *current_element;
 	current_element = malloc(sizeof(*current_element));
-	//current_element->path_name = '\0';
-	//current_element->next = NULL;
 	current_element->path_name = malloc(sizeof(folder_name) * strlen(folder_name) + 1);
 	current_element->path_name = strcpy(current_element->path_name, folder_name);
 	current_element->next = stack->first_element;
