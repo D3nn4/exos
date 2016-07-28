@@ -31,7 +31,7 @@ int compare (char *name1, char *name2);
 t_list *findPlace (t_list *to_sort, t_list *list);
 t_list *sortList (t_list *list);
 t_list *structList (DIR *dir, t_list *begin_list);
-t_list *createList (char *folder);
+t_list *createList (DIR *dir);
 t_list *reverseList (t_list *list);
 t_stack *popStack (t_stack *stack);
 t_stack *pushStack (t_stack *stack, char *folder_name);
@@ -42,6 +42,7 @@ char *line_creation( int current_len, int next_len, char *next_folder, char *cur
 void  RecursiveLs(t_stack *stack);
 void ftLsOption (t_list *entry_list, char **av, int ac, t_stack *stack);
 void ftLs (char **av, int ac);
+void freeList (t_list *list);
 
 
 

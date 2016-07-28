@@ -23,6 +23,7 @@ t_stack *pushStack (t_stack *stack, char *folder_name)
 	current_element->path_name = strcpy(current_element->path_name, folder_name);
 	current_element->next = stack->first_element;
 	stack->first_element = current_element;
+
 	return stack;
 }
 
@@ -39,3 +40,4 @@ t_stack *createStack (char *av)
 	stack->first_element = origin_folder;
 	return stack;
 }
+

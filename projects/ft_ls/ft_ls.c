@@ -18,16 +18,25 @@ void  RecursiveLs(t_stack *stack)
 {
 	char *current_folder = NULL;
 	t_list *current_list;
-	current_list = malloc(sizeof(*current_list));	
+	t_list *begin_list;	
 	while (stack->first_element){
+
 		current_folder = malloc(sizeof(*current_folder) * strlen(stack->first_element->path_name) + 1);
 		current_folder = strcpy (current_folder, stack->first_element->path_name);
 		printf("%s:\n", current_folder);
-		current_list = createList (current_folder);
-		printSimpleLs (current_list);
 
+		DIR *dir;
+		dir = opendir(current_folder);
+		if (dir == NULL){
+		printf("ERROR OPENDIR %s\n", current_folder);
+		return;
+		}
+		current_list = createList (dir);
+		printSimpleLs (current_list);
 		popStack (stack);
 		printf("\n");
+		current_list = reverseList (current_list);
+		begin_list = current_list;
 		while (current_list){
 			char *file_name = current_list->element->d_name;
 			if (current_list->element->d_type == DT_DIR
@@ -40,15 +49,18 @@ void  RecursiveLs(t_stack *stack)
 				strcat(new_path, "/");
 				strcat(new_path, file_name);				
 				stack = pushStack(stack, new_path);
+				free(new_path);
+				new_path = NULL;
 			}
 
-			current_list = current_list->next_element;
+			current_list = current_list->next_element;			
 		}
+		freeList(begin_list);
+		begin_list = NULL;
+		free(current_folder);
+		current_folder = NULL;
+		closedir(dir);
 	}
-	free(current_folder);
-	free(current_list);
-	current_folder = NULL;
-	current_list = NULL;
 	return;
 }
 
@@ -81,7 +93,13 @@ void ftLs (char **av, int ac)
 		return;
 	}
 	t_list *entry_list;
-	entry_list = createList(av[ac - 1]);
+	DIR *dir;
+	dir  = opendir(av[ac - 1]);
+	if (dir == NULL){
+		printf("ERROR OPENDIR %s\n", av [ac - 1]);
+		return;
+	}
+	entry_list = createList(dir);
 	if ((entry_list == NULL)){
 		printf("DIRECTORY %s DOESN EXIST\n", av[ac - 1]);
 		return;	
@@ -90,6 +108,10 @@ void ftLs (char **av, int ac)
 		ftLsOption(entry_list, av, ac, stack);
 	else 
 		printSimpleLs(entry_list);
+	free(stack);
+	stack = NULL;
+	freeList (entry_list);
+	closedir(dir);
 
 }
 

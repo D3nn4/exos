@@ -31,8 +31,13 @@ int compare (char *name1, char *name2)
 	min_name1 = allInMin(name1, size1);
 	min_name2 = allInMin(name2, size2);
 	comp = strcmp(min_name1, min_name2);
-	//free(min_name1);
-	//free(min_name2);
+
+	free(min_name1);
+	min_name1 = NULL;
+	free(min_name2);
+	min_name2 = NULL;
+
+	
 	return comp;
 
 }
@@ -111,21 +116,14 @@ t_list *structList (DIR *dir, t_list *begin_list)
 	return sortList (begin_list);
 }
 
-t_list *createList (char *folder)
+t_list *createList (DIR *dir)
 {
-	DIR *dir;
+	
 	t_list *entry_list;
 	entry_list = malloc(sizeof(*entry_list));
 	entry_list->element = NULL;
 	entry_list->next_element = NULL;
-	dir = opendir(folder);
-	if (dir == NULL){
-		printf("ERROR OPENDIR %s\n", folder);
-		return NULL;
-	}
-	entry_list = structList(dir, entry_list);
-	//closedir(dir);
-	
+	entry_list = structList(dir, entry_list);	
 	return entry_list;
 
 }
@@ -141,5 +139,20 @@ t_list *reverseList (t_list *list)
 		new_list = list;
 		list = temp_next;
 	}
+	
+	list = NULL;
 	return new_list;
+}
+
+void freeList (t_list *list)
+{
+	t_list *to_remove;
+	while (list)
+	{
+		to_remove = list;
+		list = list->next_element;
+		to_remove->next_element = NULL;
+		free(to_remove);
+		to_remove = NULL;
+	}
 }
