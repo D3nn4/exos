@@ -44,27 +44,28 @@ int compare (char *name1, char *name2)
 
 t_list *findPlace (t_list *to_sort, t_list *list)
 {
-	t_list *first = list;
 	t_list *temp_current = list;
 	t_list *temp_next = list->next_element;
 	while (to_sort){
-		if (compare(to_sort->element->d_name, temp_current->element->d_name) == 1 
+		if (compare(to_sort->element->d_name, temp_current->element->d_name) > 0 
 			&& temp_next == NULL){
 			temp_current->next_element = to_sort;
 			to_sort->next_element = NULL;
-			break;
+			to_sort = NULL;
+			return list;
 		}
-		if (compare(to_sort->element->d_name, temp_current->element->d_name) == 1 
-			&& compare(temp_next->element->d_name, to_sort->element->d_name) == 1){
+		if (compare(to_sort->element->d_name, temp_current->element->d_name) > 1 
+			&& compare(temp_next->element->d_name, to_sort->element->d_name) > 1){
 			to_sort->next_element = temp_next;
 			temp_current->next_element = to_sort;
-			break;
+			to_sort = NULL;
+			return list;
 		}
 		temp_current = temp_next;
 		temp_next = temp_next->next_element;
 	}
-
-	return first;
+	
+	return list;
 }
 
 t_list *sortList (t_list *list)
@@ -112,7 +113,11 @@ t_list *structList (DIR *dir, t_list *begin_list)
 		temp_next->next_element = NULL;
 		temp_current->next_element = temp_next;
 		temp_current = temp_next;
+		
 	}
+	temp_next = NULL;
+	temp_current = NULL;
+	
 	return sortList (begin_list);
 }
 

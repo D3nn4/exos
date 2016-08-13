@@ -17,7 +17,7 @@ typedef struct 	s_list {
 }				t_list;
 
 typedef struct  s_element {
-	char *path_name;
+	char *name;
 	struct s_element *next;
 
 }				t_element;
@@ -26,23 +26,40 @@ typedef struct  s_stack {
 	t_element *first_element;
 }				t_stack;
 
-char *allInMin (char *string, int size);
-int compare (char *name1, char *name2);
-t_list *findPlace (t_list *to_sort, t_list *list);
-t_list *sortList (t_list *list);
-t_list *structList (DIR *dir, t_list *begin_list);
-t_list *createList (DIR *dir);
-t_list *reverseList (t_list *list);
+typedef struct s_data {
+	t_element *option_list;
+	t_element *directory_list;
+}				t_data;
+
+
+void ftLs (int ac, char **av);
+void simpleLS (char *av);
+void freeList (t_list *list);
+void printFiles (t_list *list);
+void addSeparator (char *string);
+void RecursiveLs(t_stack *stack, t_element *option_list);
+void RecursiveLs(t_stack *stack, t_element *option_list);
+t_data *findDirAndOptions (int ac, char **av);
+t_element *validDirectory (t_element *directory_list);
+t_data *createStruct ();
+t_element *pushFrontList (char *element_name, t_element *first_element);
+t_element *pullFromList (t_element *element_list, char *element_name);
+t_stack *stackFromList (t_list *list, t_stack *stack, char *folder);
+t_stack *stackFromList (t_list *list, t_stack *stack, char *folder);
 t_stack *popStack (t_stack *stack);
 t_stack *pushStack (t_stack *stack, char *folder_name);
 t_stack *createStack (char *av);
-void printSimpleLs (t_list *list);
-char * ft_realloc(char* str, int strSize, int newSize);
-char *line_creation( int current_len, int next_len, char *next_folder, char *current_folder);
-void  RecursiveLs(t_stack *stack);
-void ftLsOption (t_list *entry_list, char **av, int ac, t_stack *stack);
-void ftLs (char **av, int ac);
-void freeList (t_list *list);
+t_list *ftLsOption (t_list *entry_list, t_element *option_list);
+t_list *reverseList (t_list *list);
+t_list *createList (DIR *dir);
+t_list *structList (DIR *dir, t_list *begin_list);
+t_list *sortList (t_list *list);
+t_list *findPlace (t_list *to_sort, t_list *list);
+int compare (char *name1, char *name2);
+char *allInMin (char *string, int size);
+
+
+
 
 
 

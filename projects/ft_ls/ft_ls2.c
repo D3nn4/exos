@@ -50,78 +50,19 @@ t_element *validDirectory (t_element *directory_list)
 			printf("ls: cannot access %s: No such file or directory\n", current_element->name);
 			directory_list = pullFromList (directory_list, current_element->name);
 			current_element = temp;
-			temp = NULL;
 		}
 		else
 			current_element = current_element->next;
 		closedir(dir);
 	}
-	current_element = NULL;
 	return directory_list;
 }
-
-void addSeparator (char *string)
-{
-	int size;
-	size = strlen (string);
-	if ((string[size - 1] == '/'))
-		return;
-	else
-		strcat(string, "/");
-}
-
-
-
-void RecursiveLs(t_stack *stack, t_element *option_list)
-{
-	char *current_folder = NULL;
-	t_list *current_list;
-	t_list *begin_list;	
-	while (stack->first_element){
-		current_folder = malloc(sizeof(*current_folder) * strlen(stack->first_element->name) + 1);
-		current_folder = strcpy (current_folder, stack->first_element->name);
-		printf("%s:\n", current_folder);
-		DIR *dir;
-		dir = opendir(current_folder);
-		if (dir == NULL){
-		printf("ERROR OPENDIR %s\n", current_folder);
-		return;
-		}
-		current_list = createList (dir);
-		//
-		current_list = ftLsOption(current_list, option_list);
-		//
-		printFiles(current_list);
-		popStack (stack);
-		printf("\n");
-		current_list = reverseList (current_list);
-		begin_list = current_list;
-		stack = stackFromList (current_list, stack, current_folder);
-		freeList(begin_list);
-		begin_list = NULL;
-		closedir(dir);
-	}
-	return;
-}
-
-t_list *ftLsOption (t_list *entry_list, t_element *option_list)
-{
-	t_element *current_option = option_list;
-	while (current_option){
-		if (strcmp (current_option->name, "-r") == 0)
-			entry_list = reverseList(entry_list);
-		current_option = current_option->next;
-	}
-	current_option = NULL;
-	return entry_list;
-}
-
-void simpleLS (char *av)
+void simpleLS (int ac, char *av)
 {
 	DIR *dir;
-		dir  = opendir(av);
+		dir  = opendir(av[1]);
 		if (dir == NULL){
-			printf("ls: cannot access %s: No such file or directory\n", av);
+			printf("ls: cannot access %s: No such file or directory\n", av[1]);
 			return;
 		}
 		t_list *entry_list;
@@ -136,7 +77,7 @@ void simpleLS (char *av)
 void ftLs (int ac, char **av)
 {
 	if (ac == 2){
-		simpleLS(av[1]);		
+		simpleLS(ac, av);		
 		return;
 	}
 	t_data *struct_data;
@@ -150,33 +91,26 @@ void ftLs (int ac, char **av)
 		}
 		t_list *entry_list;
 		DIR *dir = opendir (struct_data->directory_list->name);
-		if (dir == NULL)
-			printf("error opening dir %s\n", struct_data->directory_list->name);
-		entry_list = createList (dir);
-		
-		if (struct_data->option_list != NULL){
-			if (strcmp (struct_data->option_list->name, "-R") == 0)
-				RecursiveLs(stack, struct_data->option_list);
-			else{
-				entry_list = ftLsOption (entry_list, struct_data->option_list);
-				printFiles (entry_list);
-			}
-		}
-		else 
-			printFiles (entry_list);
+		entry_list = createList (dir)
+		ftLsOption (entry_list, struct_data->option_list, stack);
 		free(stack);
 		stack = NULL;
 		freeList (entry_list);
 		closedir(dir);
-		struct_data->directory_list = pullFromList(struct_data->directory_list, struct_data->directory_list->name);
+		pullFromList(struct_data->directory_list, struct_data->directory_list->name);
 	}
-}
+	
 
+
+
+
+
+}
 
 int main (int argc, char **argv)
 {	
 	if (argc < 2)
 		return 1;
-	ftLs(argc, argv);
+	ftLs(argv, argc);
 	return 0;
 }
