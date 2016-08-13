@@ -14,17 +14,48 @@ void printSimpleLs (t_list *list)
 	}
 }
 
-void  RecursiveLs(t_stack *stack)
+void addSeparator (char *string)
+{
+	int size;
+	size = strlen (string);
+	if ((string[size - 1] == '/'))
+		return;
+	else
+		strcat(string, "/");
+}
+
+t_stack *stackFromList (t_list *list, t_stack *stack, char *folder)
+{
+	while (list){
+		char *file_name = list->element->d_name;
+		if (list->element->d_type == DT_DIR
+				&& strcmp(file_name, ".") != 0
+				&& strcmp (file_name, "..") != 0){
+				char *new_path = NULL;   
+				new_path = malloc(sizeof(*new_path) * (strlen(folder) + 1 + strlen(file_name) + 1));
+				strcpy(new_path, folder);
+				addSeparator(new_path);
+				strcat(new_path, file_name);				
+				stack = pushStack(stack, new_path);
+				free(new_path);
+				new_path = NULL;
+		}
+		list = list->next_element;
+	}
+	free(folder);
+	folder = NULL;
+	return stack;
+}
+
+void RecursiveLs(t_stack *stack)
 {
 	char *current_folder = NULL;
 	t_list *current_list;
 	t_list *begin_list;	
 	while (stack->first_element){
-
 		current_folder = malloc(sizeof(*current_folder) * strlen(stack->first_element->path_name) + 1);
 		current_folder = strcpy (current_folder, stack->first_element->path_name);
 		printf("%s:\n", current_folder);
-
 		DIR *dir;
 		dir = opendir(current_folder);
 		if (dir == NULL){
@@ -37,51 +68,36 @@ void  RecursiveLs(t_stack *stack)
 		printf("\n");
 		current_list = reverseList (current_list);
 		begin_list = current_list;
-		while (current_list){
-			char *file_name = current_list->element->d_name;
-			if (current_list->element->d_type == DT_DIR
-				&& strcmp(file_name, ".") != 0
-				&& strcmp (file_name, "..") != 0){
-				
-				char *new_path = NULL;   
-				new_path = malloc(sizeof(*new_path) * (strlen(current_folder) + 1 + strlen(file_name) + 1));
-				strcpy(new_path, current_folder);
-				strcat(new_path, "/");
-				strcat(new_path, file_name);				
-				stack = pushStack(stack, new_path);
-				free(new_path);
-				new_path = NULL;
-			}
-
-			current_list = current_list->next_element;			
-		}
+		stack = stackFromList (current_list, stack, current_folder);
 		freeList(begin_list);
 		begin_list = NULL;
-		free(current_folder);
-		current_folder = NULL;
 		closedir(dir);
 	}
 	return;
 }
 
+t_list *optionList ()
+{
+	
+}
+
 void ftLsOption (t_list *entry_list, char **av, int ac, t_stack *stack)
 {
 	bool recu = false;
+	t_list *option_list;
+	
 	
 	int i;
 	for (i = 1; i < ac; i++){
 		if (strcmp(av[i], "-r") == 0)
 			entry_list = reverseList(entry_list);
-		if (strcmp(av[i], "-R") == 0){
+		if (strcmp(av[i], "-R") == 0)
 			recu = true;
-		}
 	}
 	if ((recu == false))
 		printSimpleLs(entry_list);
-	
 	else
 		RecursiveLs (stack);
-	
 }
 
 void ftLs (char **av, int ac)
@@ -112,7 +128,6 @@ void ftLs (char **av, int ac)
 	stack = NULL;
 	freeList (entry_list);
 	closedir(dir);
-
 }
 
 int main (int argc, char **argv)
