@@ -14,6 +14,7 @@ void printFiles (t_list *list)
 	}
 }
 
+<<<<<<< HEAD
 t_data *findDirAndOptions (int ac, char **av)
 {
 	t_data *struct_data;
@@ -60,6 +61,8 @@ t_element *validDirectory (t_element *directory_list)
 	return directory_list;
 }
 
+=======
+>>>>>>> 61586b707ef8cc2e8e1c63bccd1063debef2abd2
 void addSeparator (char *string)
 {
 	int size;
@@ -70,16 +73,48 @@ void addSeparator (char *string)
 		strcat(string, "/");
 }
 
+<<<<<<< HEAD
 
 
 void RecursiveLs(t_stack *stack, t_element *option_list)
+=======
+t_stack *stackFromList (t_list *list, t_stack *stack, char *folder)
+{
+	while (list){
+		char *file_name = list->element->d_name;
+		if (list->element->d_type == DT_DIR
+				&& strcmp(file_name, ".") != 0
+				&& strcmp (file_name, "..") != 0){
+				char *new_path = NULL;   
+				new_path = malloc(sizeof(*new_path) * (strlen(folder) + 1 + strlen(file_name) + 1));
+				strcpy(new_path, folder);
+				addSeparator(new_path);
+				strcat(new_path, file_name);				
+				stack = pushStack(stack, new_path);
+				free(new_path);
+				new_path = NULL;
+		}
+		list = list->next_element;
+	}
+	free(folder);
+	folder = NULL;
+	return stack;
+}
+
+void RecursiveLs(t_stack *stack)
+>>>>>>> 61586b707ef8cc2e8e1c63bccd1063debef2abd2
 {
 	char *current_folder = NULL;
 	t_list *current_list;
 	t_list *begin_list;	
 	while (stack->first_element){
+<<<<<<< HEAD
 		current_folder = malloc(sizeof(*current_folder) * strlen(stack->first_element->name) + 1);
 		current_folder = strcpy (current_folder, stack->first_element->name);
+=======
+		current_folder = malloc(sizeof(*current_folder) * strlen(stack->first_element->path_name) + 1);
+		current_folder = strcpy (current_folder, stack->first_element->path_name);
+>>>>>>> 61586b707ef8cc2e8e1c63bccd1063debef2abd2
 		printf("%s:\n", current_folder);
 		DIR *dir;
 		dir = opendir(current_folder);
@@ -104,6 +139,7 @@ void RecursiveLs(t_stack *stack, t_element *option_list)
 	return;
 }
 
+<<<<<<< HEAD
 t_list *ftLsOption (t_list *entry_list, t_element *option_list)
 {
 	t_element *current_option = option_list;
@@ -114,6 +150,30 @@ t_list *ftLsOption (t_list *entry_list, t_element *option_list)
 	}
 	current_option = NULL;
 	return entry_list;
+=======
+t_list *optionList ()
+{
+	
+}
+
+void ftLsOption (t_list *entry_list, char **av, int ac, t_stack *stack)
+{
+	bool recu = false;
+	t_list *option_list;
+	
+	
+	int i;
+	for (i = 1; i < ac; i++){
+		if (strcmp(av[i], "-r") == 0)
+			entry_list = reverseList(entry_list);
+		if (strcmp(av[i], "-R") == 0)
+			recu = true;
+	}
+	if ((recu == false))
+		printSimpleLs(entry_list);
+	else
+		RecursiveLs (stack);
+>>>>>>> 61586b707ef8cc2e8e1c63bccd1063debef2abd2
 }
 
 void simpleLS (char *av)
@@ -170,6 +230,17 @@ void ftLs (int ac, char **av)
 		closedir(dir);
 		struct_data->directory_list = pullFromList(struct_data->directory_list, struct_data->directory_list->name);
 	}
+<<<<<<< HEAD
+=======
+	if ((ac > 2))
+		ftLsOption(entry_list, av, ac, stack);
+	else 
+		printSimpleLs(entry_list);
+	free(stack);
+	stack = NULL;
+	freeList (entry_list);
+	closedir(dir);
+>>>>>>> 61586b707ef8cc2e8e1c63bccd1063debef2abd2
 }
 
 

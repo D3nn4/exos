@@ -1,0 +1,4 @@
+env.o
+main.o
+minishell.o
+tab_function.o
