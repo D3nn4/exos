@@ -15,8 +15,15 @@ typedef struct  s_env {
 	char **paths;
 }				t_env;
 
+typedef struct 	s_functions {
+	char *name;
+	
+
+}				t_functions;
+
 void minishell(char **env);
-void getPaths (char *string);
+void freeStruct (t_env **struct_env);
+char **getPaths (char *string);
 t_env *getEnv (char **env);
 
 

@@ -1,6 +1,6 @@
 NAME = minishell
 
-SRC = minishell.c main.c tab_function.c env.c
+SRC = minishell.c main.c tab_function.c env.c struct.c
 
 HEADER = .
 

@@ -2,7 +2,7 @@
 
 void minishell (char **env)
 {	
-	t_env *struct_env;
+	t_env *struct_env = NULL;
 	if (env != NULL && env[0] != '\0')
 		struct_env = getEnv(env);
 	else
@@ -13,7 +13,7 @@ void minishell (char **env)
 	ret = read (0, buff, SIZE_MAX);
 	buff[ret] = '\0';
 	printf("%s\n", buff );
-
+	freeStruct (&struct_env);
 }
 
 

@@ -2,3 +2,6 @@ env.o
 main.o
 minishell.o
 tab_function.o
+minishell
+tab_function.o
+struct.o
