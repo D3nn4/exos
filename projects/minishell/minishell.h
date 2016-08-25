@@ -14,6 +14,8 @@
 typedef struct  s_env {
 	char **raw_env;
 	char **paths;
+	char *home;
+	char *current_directory;
 }				t_env;
 
 typedef struct 	s_function {
@@ -23,9 +25,9 @@ typedef struct 	s_function {
 }				t_function;
 
 void minishell(char **env);
-void freeStruct (t_env **struct_env);
-void applyFunction (char *buffer, int ret);
-
+void freeStructEnv (t_env **struct_env);
+bool applyFunction (char *buffer, int ret);
+void getHome (char *string, t_env *env);
 void echo (char *args);
 t_function *getFunction (char *buffer, int ret);
 char **getPaths (char *string);

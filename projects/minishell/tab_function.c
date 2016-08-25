@@ -2,7 +2,16 @@
 
 void echo (char *args)
 {
-	if (args == NULL)
+	if (args == NULL){
+		printf("\n");
 		return;
-	printf("echo : %s", args);
+	}
+	printf("%s", args);
 }
+
+/*
+void cd (char *args)
+{
+
+}
+*/

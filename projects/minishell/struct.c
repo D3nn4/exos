@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void freeStruct (t_env **env)
+void freeStructEnv (t_env **env)
 {
 	int i;
 	t_env *struct_env = *env;
@@ -9,6 +9,10 @@ void freeStruct (t_env **env)
 		free(struct_env->paths[i]);
 	}
 	free(struct_env->paths);
+	free(struct_env->home);
+	free(struct_env->current_directory);
+	struct_env->home = NULL;
+	struct_env->current_directory = NULL;
 	struct_env->raw_env = NULL;
 	struct_env->paths = NULL;
 	free(struct_env);

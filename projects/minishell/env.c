@@ -3,8 +3,7 @@
 char **getPaths (char *string)
 {
 	int nb_path = 1;
-	int i;
-	int j;
+	int i, j;
 	for (i = 0; i < (int)strlen(string); i++){
 		if (string[i] == ':')
 			nb_path++;
@@ -32,24 +31,32 @@ char **getPaths (char *string)
 	return paths;
 }
 
+void getHome (char *string, t_env *env)
+{
+	int i;
+	int lenght = 0;
+	for (i = 5; string[i] ; i++)
+		lenght++;
+	env->home = malloc(sizeof(*env->home) * lenght + 1);
+	env->current_directory = malloc(sizeof(*env->current_directory) * lenght + 1);
+	env->home = strcpy(env->home, string + 5);
+	env->current_directory = strcpy (env->current_directory, string + 5);
+}
+
 t_env *getEnv (char **env)
 {
 	int i;
 	t_env *struct_env = malloc(sizeof(*struct_env));
 	struct_env->raw_env = env;
-	for (i = 0; env[i]; i++){
-		if (strncmp(env[i], "PATH=", 5) == 0){
-			struct_env->paths = getPaths (env[i]);
-			/*
-			int j = 0;
-			while (struct_env->paths[j]){
-				printf("%s\n", struct_env->paths[j]);
-				j++;
-			}
-			*/
-			return struct_env;
-		}
-	}
 	struct_env->paths = NULL;
+	struct_env->current_directory = NULL;
+	struct_env->home = NULL;
+	for (i = 0; env[i]; i++){
+		if (strncmp(env[i], "PATH=", 5) == 0)
+			struct_env->paths = getPaths (env[i]);
+		if (strncmp (env[i], "HOME=", 5) == 0)
+			getHome(env[i], struct_env);
+	}
+	
 	return struct_env;
 }
