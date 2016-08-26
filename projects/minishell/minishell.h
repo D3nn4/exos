@@ -1,10 +1,7 @@
 #ifndef __HEADER_H__
 #define __HEADER_H__
 
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+
 #include <stdbool.h>
 
 
@@ -28,6 +25,7 @@ void minishell(char **env);
 void freeStructEnv (t_env **struct_env);
 bool applyFunction (char *buffer, int ret);
 void getHome (char *string, t_env *env);
+void freeStructFunction (t_function **function);
 void echo (char *args);
 t_function *getFunction (char *buffer, int ret);
 char **getPaths (char *string);

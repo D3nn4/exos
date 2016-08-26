@@ -1,4 +1,7 @@
+#include <stdio.h>
+#include "ft.h"
 #include "minishell.h"
+
 
 void echo (char *args)
 {

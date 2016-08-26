@@ -2,7 +2,8 @@
 
 int main (int argc, char **argv, char **env)
 {
-	if (argc == 1)
-		minishell(env);
+	(void)argv;
+	(void)argc;
+	minishell(env);
 	return 0;
 }
