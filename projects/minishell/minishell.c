@@ -21,24 +21,32 @@ t_function *getFunction (char *buffer, int ret)
 		data = malloc(sizeof(*data));
 		data->name = malloc(sizeof(*data->name) * i + 1);
 		data->name = strncpy(data->name, buffer, i - 1);
-	//printf("%s\n", data->name);
+		data->name[i-1] = '\0';
 		data->args = malloc (sizeof(*data->args) * (ret - i) + 1);
 		data->args = strcpy(data->args, buffer + i);
 	}
+	const int end_of_args = strlen (data->args);
+	if (end_of_args > 1 && data->args[end_of_args - 1] == '\n')
+		data->args[end_of_args - 1] = '\0';
+
+	
 	return data;
 }
 
-bool applyFunction (char *buffer, int ret)
+bool applyFunction (char *buffer, int ret, t_env *env)
 {
 	t_function *data = getFunction(buffer, ret);
+	//printf("%p\n", data);
 	if (data == NULL)
 		return true;
-	if (strcmp(data->name, "exit") == 0){
+	else if (strcmp(data->name, "exit") == 0){
 		freeStructFunction(&data);
 		return false;
 	}
-	if (strcmp(data->name, "echo") == 0)
+	else if (strcmp(data->name, "echo") == 0)
 		echo(data->args);
+	else if (strcmp (data->name, "cd") == 0)
+		cd (data->args, env);
 	else 
 		printf("%s: command not found\n", data->name);
 	freeStructFunction(&data);
@@ -64,10 +72,10 @@ void minishell (char **env)
 			return;
 		buff[ret] = '\0';
 		if (ret > 1 && buff[0] != '\n')
-			status = applyFunction (buff,ret);
+			status = applyFunction (buff,ret, struct_env);
 		if (buff[ret-1] != '\n')
 			printf("\n");
-		
+		printf("dir : %s\n", struct_env->current_directory);
 	}
 	freeStructEnv (&struct_env);
 }
