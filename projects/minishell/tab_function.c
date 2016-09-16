@@ -48,6 +48,7 @@ char *previousDir (char *str)
 
 char *eraseDots (char *str)
 {
+	if ()
 	int i;
 	char *new_str = malloc (sizeof(*new_str) * (strlen(str) + 1));
 	for (i = 0; str[i] != '\0'; i++){
