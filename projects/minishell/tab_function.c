@@ -10,7 +10,7 @@
 
 
 
-
+// COucou les amis
 void echo (char *args)
 {
 	if (args == NULL){
