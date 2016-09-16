@@ -34,8 +34,16 @@ char *previousDir (char *str)
 {
 	char *new_str = NULL;
 	int size, i;
-	size = strlen(str);
-	i = 0; 
+	size = strlen(str) - 1; //to be on last /
+	i = size;
+	while (str[i - 1] != '/')
+		i--;
+	new_str = malloc (sizeof(*new_str) * (i + 1)); // +1 = Null byte
+	new_str = strncpy(new_str, str, i);
+	printf("str : %s\n", str);
+	printf("new_str : %s\n", new_str);
+	free (str);
+	return new_str;
 }
 
 char *eraseDots (char *str)
@@ -46,7 +54,9 @@ char *eraseDots (char *str)
 		while (str[i] == '.'){
 			if (str[i + 1] == '.'){
 				// go previous dir !! TO DO !!
-				i = i + 3; //from ../ next dir
+				new_str =  previousDir(new_str);
+				printf("new_str eraseDots: %s\n", new_str);
+				i = i + 2; //from ../ next dir
 			}
 			else if (str[i + 1] == '/')
 				i =i + 2; //from ./ next dir
@@ -63,18 +73,18 @@ char *eraseDots (char *str)
 
 char *isDir (char *args, t_env *env)
 {	
-	printf("args: %s\n", args);
+	//printf("args: %s\n", args);
 	char *next_dir = malloc (sizeof(*next_dir) * strlen (env->current_directory) + 1); // +1: Null byte
 	next_dir = strcpy (next_dir, env->current_directory);
 	DIR *dir = NULL;
-	printf("next_dir: copy: %s\n", next_dir);
+	//printf("next_dir: copy: %s\n", next_dir);
 	next_dir = addSeparator(next_dir);
 	if (args[0] == '/')
 		args = args + 1;
-	printf("next_dir: addSeparator: %s\n", next_dir);
+	//printf("next_dir: addSeparator: %s\n", next_dir);
 	int temp_size = strlen(next_dir) + strlen(args);
 	next_dir = realloc (next_dir, sizeof(*next_dir) * (temp_size + 1)); // +1: Null byte
-	printf("next_dir: realloc: %s\n", next_dir);
+	//printf("next_dir: realloc: %s\n", next_dir);
 	if (next_dir == NULL){
 		printf("error realloc isDir\n");
 		return NULL;

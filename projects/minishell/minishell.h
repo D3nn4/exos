@@ -30,6 +30,7 @@ void getHome (char *string, t_env *env);
 void freeStructFunction (t_function **function);
 void echo (char *args);
 void cd (char *args, t_env *env);
+char * previousDir (char *str);
 char *isDir (char *args, t_env *env);
 t_function *getFunction (char *buffer, int ret);
 char **getPaths (char *string);
