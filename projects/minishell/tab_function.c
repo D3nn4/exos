@@ -10,7 +10,7 @@
 
 
 
-// COucou les amis
+
 void echo (char *args)
 {
 	if (args == NULL){
@@ -33,65 +33,78 @@ char *addSeparator (char *string)
 char *previousDir (char *str)
 {
 	char *new_str = NULL;
-	int size, i;
+	int size, i,j;
 	size = strlen(str) - 1; //to be on last /
 	i = size;
 	while (str[i - 1] != '/')
 		i--;
 	new_str = malloc (sizeof(*new_str) * (i + 1)); // +1 = Null byte
+	if (new_str == NULL)
+		return NULL;
+	for (j = 0; j < i+1; (new_str[j++] = '\0'));
+	new_str[0] = '\0';
 	new_str = strncpy(new_str, str, i);
-	printf("str : %s\n", str);
-	printf("new_str : %s\n", new_str);
+	//printf("str : %s\n", str);
+	//printf("new_str : %s\n", new_str);
 	free (str);
 	return new_str;
 }
 
 char *eraseDots (char *str)
 {
-	if ()
 	int i;
-	char *new_str = malloc (sizeof(*new_str) * (strlen(str) + 1));
+	char *new_str = NULL;
+	new_str = malloc (sizeof(*new_str) * (strlen(str) + 1));
+	if (new_str == NULL)
+		return NULL;
+	new_str[0] = '\0';
 	for (i = 0; str[i] != '\0'; i++){
 		while (str[i] == '.'){
 			if (str[i + 1] == '.'){
-				// go previous dir !! TO DO !!
 				new_str =  previousDir(new_str);
-				printf("new_str eraseDots: %s\n", new_str);
+	//			printf("new_str eraseDots: %s\n", new_str);
 				i = i + 2; //from ../ next dir
 			}
 			else if (str[i + 1] == '/')
-				i =i + 2; //from ./ next dir
+				i = i + 1; //from ./ next dir
 			else 
-				printf("toto\n");
+				printf("error eraseDots\n");
 		}
-	strncat (new_str, str + i, 1);
+		strncat (new_str, str + i, 1);
 	}
 	strncat (new_str, str + i, 1);
-	printf("hello erase dots\n");
+	//printf("hello erase dots\n");
 	free (str);
 	return new_str;
 }
 
 char *isDir (char *args, t_env *env)
 {	
+	if ((strcmp(args, "..") == 0) 
+		&& strcmp(env->current_directory, "/") == 0) 
+		return env->current_directory;
 	//printf("args: %s\n", args);
 	char *next_dir = malloc (sizeof(*next_dir) * strlen (env->current_directory) + 1); // +1: Null byte
 	next_dir = strcpy (next_dir, env->current_directory);
+	
 	DIR *dir = NULL;
 	//printf("next_dir: copy: %s\n", next_dir);
 	next_dir = addSeparator(next_dir);
+	next_dir[strlen(next_dir)] = '\0';
 	if (args[0] == '/')
 		args = args + 1;
 	//printf("next_dir: addSeparator: %s\n", next_dir);
 	int temp_size = strlen(next_dir) + strlen(args);
-	next_dir = realloc (next_dir, sizeof(*next_dir) * (temp_size + 1)); // +1: Null byte
+	char * temp_dir = realloc (next_dir, sizeof(*next_dir) * (temp_size + 1)); // +1: Null byte
+	next_dir = temp_dir;
+	next_dir[temp_size] = '\0';
 	//printf("next_dir: realloc: %s\n", next_dir);
 	if (next_dir == NULL){
 		printf("error realloc isDir\n");
 		return NULL;
 	}
 	strcat (next_dir, args);
-	printf("next_dir: strcat: %s\n", next_dir);
+	//printf("next_dir: strcat: %s\n", next_dir);
 	next_dir = eraseDots (next_dir);
 	dir = opendir (next_dir);
 	if (dir == NULL){
