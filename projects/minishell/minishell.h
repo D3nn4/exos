@@ -25,15 +25,19 @@ typedef struct 	s_function {
 
 void minishell(char **env);
 void freeStructEnv (t_env **struct_env);
-bool applyFunction (char *buffer, int ret, t_env *env);
 void getHome (char *string, t_env *env);
 void freeStructFunction (t_function **function);
 void echo (char *args);
 void cd (char *args, t_env *env);
+char *addSeparator (char *string);
+char *eraseDots (char *str);
 char * previousDir (char *str);
 char *isDir (char *args, t_env *env);
-t_function *getFunction (char *buffer, int ret);
 char **getPaths (char *string);
+bool applyFunction (char *buffer, int ret, t_env *env);
+bool FindBuiltInFunction (t_function *data, t_env *env);
+bool findLibFunction (t_function *data, t_env *env);
+t_function *getFunction (char *buffer, int ret);
 t_env *getEnv (char **env);
 
 
