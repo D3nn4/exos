@@ -34,6 +34,8 @@ char *eraseDots (char *str);
 char * previousDir (char *str);
 char *isDir (char *args, t_env *env);
 char **getPaths (char *string);
+char *addPath (char *name, char *path);
+bool testLibFunction (t_function *data, t_env *env);
 bool applyFunction (char *buffer, int ret, t_env *env);
 bool FindBuiltInFunction (t_function *data, t_env *env);
 bool findLibFunction (t_function *data, t_env *env);
