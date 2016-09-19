@@ -4,6 +4,17 @@
 #include "ft.h"
 #include "minishell.h"
 
+void displayEnv (t_env *env)
+{
+	int i;
+	if (env == NULL || env->raw_env == NULL){
+		printf("error : no env\n");
+		return;
+	}
+	for(i = 0; env->raw_env[i] != NULL; i++) {
+		printf("%s\n", env->raw_env[i]);
+	}
+}
 
 char **getPaths (char *string)
 {

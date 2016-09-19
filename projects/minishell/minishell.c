@@ -40,6 +40,8 @@ bool FindBuiltInFunction (t_function *data, t_env *env)
 		echo(data->args);
 	else if (strcmp (data->name, "cd") == 0)
 		cd (data->args, env);
+	else if (strcmp (data->name, "setenv") == 0)
+		setenv (data, env);
 	else
 		return false;
 	return true;

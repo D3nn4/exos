@@ -51,7 +51,7 @@ bool testLibFunction (t_function *data, t_env *env)
 		}
 		if (father == 0){
 			//printf("trying a path\n");
-			return_value = execve (path_to_test, data->args, env->raw_env);
+			return_value = execve (path_to_test, &data->args, env->raw_env);
 			exit(return_value);
 		}
 		free(path_to_test);
