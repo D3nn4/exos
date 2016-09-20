@@ -11,7 +11,7 @@ t_function *getFunction (char *buffer, int ret)
 	t_function *data = NULL;
 	int i = 0;
 	while (buffer[i] != '\0'){
-		if (buffer[i] == ' '){
+		if (buffer[i] == ' ' || buffer[i] == '\t'){
 			i++;
 			break;
 		}
@@ -21,15 +21,20 @@ t_function *getFunction (char *buffer, int ret)
 		data = malloc(sizeof(*data));
 		data->name = malloc(sizeof(*data->name) * i + 1);
 		data->name = strncpy(data->name, buffer, i - 1);
-		data->name[i-1] = '\0';
-		data->args = malloc (sizeof(*data->args) * (ret - i) + 1);
-		data->args = strcpy(data->args, buffer + i);
+		data->name[i-1] = '\0';	
+		while (buffer[i] == ' ' || buffer[i] == '\t')
+			i++;
+		if (buffer[i] == '\0' || buffer[i] == '\n'){
+			data->args = NULL;
+		}
+		else {
+			data->args = malloc (sizeof(*data->args) * (ret - i) + 1);
+			data->args = strcpy(data->args, buffer + i);
+			/*const int end_of_args = strlen (data->args);
+			if (end_of_args > 1 && data->args[end_of_args - 1] == '\n')
+				data->args[end_of_args - 1] = '\0';*/
+		}
 	}
-	const int end_of_args = strlen (data->args);
-	if (end_of_args > 1 && data->args[end_of_args - 1] == '\n')
-		data->args[end_of_args - 1] = '\0';
-
-	
 	return data;
 }
 
@@ -41,7 +46,7 @@ bool FindBuiltInFunction (t_function *data, t_env *env)
 	else if (strcmp (data->name, "cd") == 0)
 		cd (data->args, env);
 	else if (strcmp (data->name, "setenv") == 0)
-		setenv (data, env);
+		mySetenv (data, env);
 	else
 		return false;
 	return true;

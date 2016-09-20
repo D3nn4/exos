@@ -30,6 +30,7 @@ void freeStructFunction (t_function **function);
 void echo (char *args);
 void cd (char *args, t_env *env);
 void displayEnv (t_env *env);
+void mySetenv (t_function *data, t_env *env);
 char *addSeparator (char *string);
 char *eraseDots (char *str);
 char * previousDir (char *str);

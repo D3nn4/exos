@@ -107,7 +107,7 @@ char *isDir (char *args, t_env *env)
 void cd (char *args, t_env *env)
 {
 	char *new_dir = NULL;
-	if (args[0]== '\0'){
+	if (/*args[0]== '\0' || */args == NULL /*|| args[0]== '\n'*/){
 		env->current_directory = env->home;
 		return;
 	}
