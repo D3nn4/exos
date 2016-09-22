@@ -46,7 +46,7 @@ bool testLibFunction (t_function *data, t_env *env);
 bool applyFunction (char *buffer, int ret, t_env *env);
 bool FindBuiltInFunction (t_function *data, t_env *env);
 bool findLibFunction (t_function *data, t_env *env);
-t_function *getFunction (char *buffer, int ret);
+t_function *getFunction (char *buffer);
 t_env *getEnv (char **env);
 
 

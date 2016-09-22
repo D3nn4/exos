@@ -47,8 +47,12 @@ void modifyVar (t_env *env, char *var, char *value)
 	int size = strlen(var);
 	int i = 0;
 	char **list = env->raw_env;
-	while (strncmp(list[i], var, size) != 0) 
+	while (list[i] != NULL && strncmp(list[i], var, size) != 0) 
 		i++;
+	if (list[i] == NULL){
+		addNewVar(env, var, value);
+		return;
+	}
 	list[i] = malloc(sizeof(*list[i]) * (strlen(value) + size + 2)); // + 2 for = && \0
 	list[i] = strcpy(list[i], var);
 	strcat(list[i], "=");
@@ -61,7 +65,7 @@ bool checkVar (char **list, char *var)
 	int size = strlen(var);
 	int i ;
 	for (i = 0; list[i] != NULL; i++) {
-		if(strncmp(list[i], var, size) == 0)
+		if(list[i] != NULL && strncmp(list[i], var, size) == 0)
 			return true;
 	}
 	return false;
@@ -78,7 +82,7 @@ void mySetenv (char *data, t_env *env)
 	}
 	// separer nom variable et valeur
 	t_function *var_to_add = NULL;
-	var_to_add = getFunction(data, strlen(data)); 
+	var_to_add = getFunction(data); 
 	printf("%s\n", var_to_add->name);
 	// verifier si elle existe
 	if (checkVar(env->raw_env, var_to_add->name)) 

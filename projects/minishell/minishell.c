@@ -6,7 +6,7 @@
 #include "ft.h"
 #include "minishell.h"
 
-t_function *getFunction (char *buffer, int ret)
+t_function *getFunction (char *buffer)
 {
 	t_function *data = NULL;
 	int i = 0;
@@ -17,6 +17,8 @@ t_function *getFunction (char *buffer, int ret)
 		}
 		i++;
 	}
+	if (buffer[i] == '\0' && buffer[i - 1] != '\n')
+		i++;
 	if (i > 0){
 		data = malloc(sizeof(*data));
 		if (data == NULL){
@@ -35,7 +37,7 @@ t_function *getFunction (char *buffer, int ret)
 		if (buffer[i] == '\0' || buffer[i] == '\n')
 			data->args = NULL;
 		else {
-			data->args = malloc (sizeof(*data->args) * (ret - i + 1));
+			data->args = malloc (sizeof(*data->args) * strlen(buffer + i) );
 			if (data->args == NULL){
 			printf("error malloc getFunction\n");
 			return NULL;
@@ -60,7 +62,7 @@ bool FindBuiltInFunction (t_function *data, t_env *env)
 		mySetenv (data->args, env);
 	else if (strcmp (data->name, "unsetenv") == 0)
 		myUnsetenv (data->args, env);
-	else if (strcmp (data->name, "penv") == 0)
+	else if (strcmp (data->name, "env") == 0)
 		displayEnv (env);
 	else
 		return false;
@@ -69,7 +71,8 @@ bool FindBuiltInFunction (t_function *data, t_env *env)
 
 bool applyFunction (char *buffer, int ret, t_env *env)
 {
-	t_function *data = getFunction(buffer, ret);
+	(void)ret;
+	t_function *data = getFunction(buffer);
 	if (data == NULL)
 		return true;
 	if (strcmp(data->name, "exit") == 0
