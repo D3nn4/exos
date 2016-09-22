@@ -10,10 +10,11 @@ void addNewVar(t_env *env, char *var, char *value)
 {
 	int size = 0;
 	int i;
+	int str_len = 0;
 	char **new_env = NULL;
 	for(i = 0; env->raw_env[i] != NULL; i++)
 		size++;
-	new_env = malloc(sizeof(*new_env) * size + 2);// +2 => newvalue + NULL
+	new_env = malloc(sizeof(*new_env) * (size + 2));// +2 => newvalue + NULL
 	if (new_env == NULL){
 		printf("error realloc addVarEnv\n");
 		return;
@@ -21,7 +22,11 @@ void addNewVar(t_env *env, char *var, char *value)
 	for (i = 0; env->raw_env[i] != NULL; i++) {
 		new_env[i] = env->raw_env[i];
 	}
-	new_env[i] = malloc(sizeof(**new_env) * (strlen(var) + strlen(value) + 2)); // +2 => = + '\0'
+	if (value == NULL)
+		str_len = strlen(var);
+	else
+		str_len = strlen(var) + strlen(value);
+	new_env[i] = malloc(sizeof(**new_env) * (str_len + 2)); // +2 => = + '\0'
 	if (new_env[i] == NULL) {
 		printf("error malloc new var addVarEnv\n");
 		return;
@@ -74,6 +79,7 @@ void mySetenv (char *data, t_env *env)
 	// separer nom variable et valeur
 	t_function *var_to_add = NULL;
 	var_to_add = getFunction(data, strlen(data)); 
+	printf("%s\n", var_to_add->name);
 	// verifier si elle existe
 	if (checkVar(env->raw_env, var_to_add->name)) 
 		// si oui modifier contenue 

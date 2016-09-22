@@ -4,6 +4,7 @@
 #include "minishell.h"
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -73,8 +74,8 @@ char *isDir (char *args, t_env *env)
 {	
 	if ((strcmp(args, "..") == 0) && strcmp(env->current_directory, "/") == 0 ) 
 		return env->current_directory;
-	char *next_dir = malloc (sizeof(*next_dir) * strlen (env->current_directory) + 1); // +1: Null byte
-	next_dir = strcpy (next_dir, env->current_directory);
+	char *next_dir = malloc(sizeof(*next_dir) * (strlen(env->current_directory) + 1)); // +1: Null byte
+	next_dir = strcpy(next_dir, env->current_directory);
 	DIR *dir = NULL;
 	next_dir = addSeparator(next_dir);
 	next_dir[strlen(next_dir)] = '\0';
@@ -108,6 +109,7 @@ void cd (char *args, t_env *env)
 	if (args == NULL){
 		modifyVar(env, "OLDPWD", env->current_directory);
 		modifyVar(env, "PWD", env->home);
+		chdir(env->home);
 		env->current_directory = env->home;
 		return;
 	}
@@ -118,6 +120,7 @@ void cd (char *args, t_env *env)
 	if (new_dir != NULL){
 		modifyVar(env, "OLDPWD", env->current_directory);
 		modifyVar(env, "PWD", new_dir);
+		chdir(new_dir);
 		free(env->current_directory);
 		env->current_directory = new_dir;
 	}

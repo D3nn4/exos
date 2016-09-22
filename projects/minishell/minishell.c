@@ -19,7 +19,15 @@ t_function *getFunction (char *buffer, int ret)
 	}
 	if (i > 0){
 		data = malloc(sizeof(*data));
+		if (data == NULL){
+			printf("error malloc getFunction\n");
+			return NULL;
+		}
 		data->name = malloc(sizeof(*data->name) * (i + 1));
+		if (data->name == NULL){
+			printf("error malloc getFunction\n");
+			return NULL;
+		}
 		data->name = strncpy(data->name, buffer, i - 1);
 		data->name[i - 1] = '\0';	
 		while (buffer[i] == ' ' || buffer[i] == '\t')
@@ -28,6 +36,10 @@ t_function *getFunction (char *buffer, int ret)
 			data->args = NULL;
 		else {
 			data->args = malloc (sizeof(*data->args) * (ret - i + 1));
+			if (data->args == NULL){
+			printf("error malloc getFunction\n");
+			return NULL;
+		}
 			data->args = strcpy(data->args, buffer + i);
 			const int end_of_args = strlen (data->args);
 			if (end_of_args > 1 && data->args[end_of_args - 1] == '\n')
@@ -46,6 +58,8 @@ bool FindBuiltInFunction (t_function *data, t_env *env)
 		cd (data->args, env);
 	else if (strcmp (data->name, "setenv") == 0)
 		mySetenv (data->args, env);
+	else if (strcmp (data->name, "unsetenv") == 0)
+		myUnsetenv (data->args, env);
 	else if (strcmp (data->name, "penv") == 0)
 		displayEnv (env);
 	else
@@ -76,13 +90,10 @@ void minishell (char **env)
 {	
 	size_t size_max = SIZE_MAX;
 	t_env *struct_env = NULL;
-		if (env != NULL && env[0] != '\0'){
-			struct_env = getEnv(env);
-			modifyVar(struct_env, "PWD", struct_env->current_directory);
-			modifyVar(struct_env, "OLDPWD", struct_env->current_directory);
-		}
-		else
-			struct_env = NULL;
+	struct_env = getEnv(env);
+	modifyVar(struct_env, "PWD", struct_env->current_directory);
+	chdir(struct_env->current_directory);
+	modifyVar(struct_env, "OLDPWD", struct_env->current_directory);
 	bool status = true;
 	while (status){
 		

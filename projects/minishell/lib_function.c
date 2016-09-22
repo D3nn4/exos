@@ -68,9 +68,10 @@ bool testLibFunction (t_function *data, t_env *env)
 	for (i = 0; env->paths[i] != NULL; i++) {
 		path_to_test = addPath (data->name, env->paths[i]);
 		struct stat *buf = NULL;
-		buf = malloc(sizeof(buf));
+		buf = malloc(sizeof(*buf));
 		if(stat(path_to_test, buf) == 0) {
-			return applyLibFunction(path_to_test, data, env);
+			applyLibFunction(path_to_test, data, env);
+			return true;
 		}
 		free(path_to_test);
 		free(buf);

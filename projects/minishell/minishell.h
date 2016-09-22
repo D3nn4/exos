@@ -34,6 +34,7 @@ void displayEnv (t_env *env);
 void mySetenv (char *data, t_env *env);
 void addNewVar(t_env *env, char *var, char *value);
 void modifyVar (t_env *env, char *var, char *value);
+void myUnsetenv (char *data, t_env *env);
 char *addSeparator (char *string);
 char *eraseDots (char *str);
 char * previousDir (char *str);

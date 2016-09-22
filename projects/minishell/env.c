@@ -63,6 +63,12 @@ t_env *getEnv (char **env)
 {
 	int i;
 	t_env *struct_env = malloc(sizeof(*struct_env));
+	if (env == NULL ){
+		addNewVar (struct_env, "PWD", "/");
+		addNewVar (struct_env, "OLDPWD", "/");
+		addNewVar (struct_env, "HOME", "/");
+		addNewVar (struct_env, "PATH", "/");
+	}
 	struct_env->raw_env = env;
 	struct_env->paths = NULL;
 	struct_env->current_directory = NULL;
