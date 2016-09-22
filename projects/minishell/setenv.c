@@ -92,5 +92,6 @@ void mySetenv (char *data, t_env *env)
 	// si non la creer et mettre contenu si pas de vasleur, = null
 		addNewVar(env, var_to_add->name, var_to_add->args);
 	// exporter vers subshells
-
+	freeStructFunction (&var_to_add);
+	
 }

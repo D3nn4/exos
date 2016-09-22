@@ -38,6 +38,7 @@ char **getListVar (char *data)
 		list_var[i][size] = '\0';
 		curseur = j;
 	}
+	list_var[arg_nb] = NULL;
 	return list_var;
 }
 
@@ -45,6 +46,7 @@ void deleteVar (t_env *env, char *var)
 {
 	int size = 0;
 	int i;
+	int j = 0;
 	char **new_env = NULL;
 	for(i = 0; env->raw_env[i] != NULL; i++)
 		size++;
@@ -54,10 +56,12 @@ void deleteVar (t_env *env, char *var)
 		return;
 	}
 	for (i = 0; env->raw_env[i] != NULL; i++) {
-		if (strncmp(env->raw_env[i], var, strlen(var)) != 0)
-			new_env[i] = env->raw_env[i];
+		if (strncmp(env->raw_env[i], var, strlen(var)) != 0){
+			new_env[j] = env->raw_env[i];
+			j++;
+		}
 	}
-	//new_env[size] = NULL;
+	new_env[size - 1] = NULL;
 	free(env->raw_env);
 	env->raw_env = new_env;
 }

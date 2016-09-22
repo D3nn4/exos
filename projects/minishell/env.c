@@ -41,6 +41,7 @@ char **getPaths (char *string)
 			return NULL;
 		}
 		paths[i] = strncpy (paths[i], string + curseur, j - curseur);
+		paths[i][j - curseur] = '\0';
 		curseur = j + 1;
 	}
 	paths[nb_path] = NULL;

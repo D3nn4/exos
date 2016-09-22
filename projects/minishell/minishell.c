@@ -37,7 +37,7 @@ t_function *getFunction (char *buffer)
 		if (buffer[i] == '\0' || buffer[i] == '\n')
 			data->args = NULL;
 		else {
-			data->args = malloc (sizeof(*data->args) * strlen(buffer + i) );
+			data->args = malloc (sizeof(*data->args) * strlen(buffer + i) + 1 );
 			if (data->args == NULL){
 			printf("error malloc getFunction\n");
 			return NULL;
@@ -76,7 +76,7 @@ bool applyFunction (char *buffer, int ret, t_env *env)
 	if (data == NULL)
 		return true;
 	if (strcmp(data->name, "exit") == 0
-		|| strcmp(data->name, "q") == 0 
+		//|| strcmp(data->name, "q") == 0 
 		|| strcmp(data->name, "quit") == 0){
 		freeStructFunction(&data);
 		return false;
