@@ -1,13 +1,7 @@
-#include <stdio.h>
-#include <dirent.h>
-#include "ft.h"
-#include "minishell.h"
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include "ft.h"
+#include "minishell.h"
 
 char *cdAbsolute(char *args)
 {
@@ -91,15 +85,7 @@ void cd (char *args, t_env *env)
 		noArgCd(env);
 		return;
 	}
-	if (((strcmp(args, "..") == 0) && (strcmp(env->current_directory, "/") == 0))
-		|| strcmp(args, ".") == 0) 
-		new_dir = env->current_directory;
-	else if (strcmp(args, "-") == 0)
-		new_dir = cdOldPwd(env->raw_env);
-	else{
-		if (((new_dir = cdAbsolute(args)) == NULL))
-			new_dir = cdRelatif(args, env);
-	}
+	new_dir = getNewDir(args, env);
 	if (new_dir == NULL){
 		printf("minishell: cd: %s: No such file or directory\n", args);
 		return;

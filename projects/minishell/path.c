@@ -1,12 +1,7 @@
-#include "ft.h"
-#include "minishell.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/wait.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ft.h"
+#include "minishell.h"
 
 void printPath (t_env *env)
 {

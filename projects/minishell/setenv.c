@@ -1,9 +1,8 @@
-#include "ft.h"
-#include "minishell.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
+#include "ft.h"
+#include "minishell.h"
 
 
 void addNewVar(t_env *env, char *var, char *value)
@@ -26,10 +25,9 @@ void addNewVar(t_env *env, char *var, char *value)
 		return;
 	new_env[i] = strcpy(new_env[i], var);
 	strcat(new_env[i], "=");
-	if (value == NULL)
-		strcat(new_env[i], "\0");
-	else
+	if (value != NULL)
 		strcat(new_env[i], value);
+	strcat(new_env[i], "\0");
 	new_env[i+1] = NULL;
 	env->raw_env = new_env;
 }
@@ -72,23 +70,16 @@ bool checkVar (char **list, char *var)
 
 void mySetenv (char *data, t_env *env)
 {
-	// si pas d'argument afficher env
 	if (data == NULL){
 		printf("args null setenv\n");
 		displayEnv(env->raw_env);
 		return;
 	}
-	// separer nom variable et valeur
 	t_function *var_to_add = NULL;
 	var_to_add = getFunction(data);
-	// verifier si elle existe
 	if (checkVar(env->raw_env, var_to_add->name)) 
-		// si oui modifier contenue 
 		modifyVar(env, var_to_add->name, var_to_add->args);
 	else
-	// si non la creer et mettre contenu si pas de vasleur, = null
 		addNewVar(env, var_to_add->name, var_to_add->args);
-	// exporter vers subshells
 	freeStructFunction (&var_to_add);
-
 }

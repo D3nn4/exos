@@ -1,13 +1,8 @@
-#include <stdio.h>
 #include <dirent.h>
-#include "ft.h"
-#include "minishell.h"
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include "ft.h"
+#include "minishell.h"
 
 char *previousDir (char *str)
 {
@@ -37,6 +32,25 @@ bool isDir(char *path)
 	}
 	closedir(dir);
 	return true;
+}
+
+char *getNewDir (char *args, t_env*env)
+{
+	char *new_dir = NULL;
+	if (((strcmp(args, "..") == 0) && (strcmp(env->current_directory, "/") == 0))
+		|| strcmp(args, ".") == 0) {
+		int size = strlen(env->current_directory);
+		new_dir = malloc(sizeof(*new_dir) * (size + 1));
+		new_dir = strcpy(new_dir, env->current_directory);
+		new_dir[size] = '\0';
+	}
+	else if (strcmp(args, "-") == 0)
+		new_dir = cdOldPwd(env->raw_env);
+	else{
+		if (((new_dir = cdAbsolute(args)) == NULL))
+			new_dir = cdRelatif(args, env);
+	}
+	return new_dir;
 }
 /*
 char *isDir2 (char *args, t_env *env)

@@ -1,22 +1,8 @@
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include "ft.h"
 #include "minishell.h"
-
-void displayEnv (char **env)
-{
-	int i;
-	if (env == NULL){
-		printf("error : no env\n");
-		return;
-	}
-	for(i = 0; env[i] != NULL; i++) {
-		printf("%s\n", env[i]);
-	}
-}
 
 char **getPaths (char *string)
 {
@@ -34,7 +20,7 @@ char **getPaths (char *string)
 	int curseur = 5;
 	for (i = 0; i < nb_path; i++){
 		j = curseur;
-		while (string[j] != ':')
+		while (string[j] != ':' && string[j] != '\0')
 			j++;
 		paths[i] = malloc (sizeof(**paths) * (j - curseur) + 1);
 		if (paths[i] == NULL) 
@@ -56,12 +42,21 @@ void getHome (char *string, t_env *env)
 	env->home = malloc(sizeof(*env->home) * lenght + 1);
 	if (env->home == NULL)
 		return;
+	env->home = strcpy(env->home, string + 5);
+}
+
+void getCurrent (char *string, t_env *env)
+{
+	int i;
+	int lenght = 0;
+	for (i = 5; string[i] ; i++)
+		lenght++;
 	env->current_directory = malloc(sizeof(*env->current_directory) * lenght + 1);
 	if (env->current_directory == NULL)
 		return;
-	env->home = strcpy(env->home, string + 5);
 	env->current_directory = strcpy (env->current_directory, string + 5);
 }
+
 void createEnv (t_env **struct_env)
 {
 	t_env *env = *struct_env;
@@ -99,22 +94,18 @@ t_env *getEnv (char **env)
 	struct_env->paths = NULL;
 	struct_env->current_directory = NULL;
 	struct_env->home = NULL;
-	struct_env->raw_env = env;
+	struct_env->raw_env = copy2D(env);
 	if (env == NULL || checkVar(env, "HOME") == false){
 		createEnv(&struct_env);
 	}	
 	for (i = 0; struct_env->raw_env[i]; i++){
 		if (strncmp(struct_env->raw_env[i], "PATH=", 5) == 0)
 			struct_env->paths = getPaths (struct_env->raw_env[i]);
-		if (strncmp (struct_env->raw_env[i], "HOME=", 5) == 0){
+		if (strncmp (struct_env->raw_env[i], "HOME=", 5) == 0)
 			getHome(struct_env->raw_env[i], struct_env);
-			struct_env->current_directory = malloc(sizeof(*struct_env->current_directory) * (strlen(struct_env->home) + 1));
-			if (struct_env->current_directory == NULL)
-				return NULL;
-			struct_env->current_directory = strcpy(struct_env->current_directory, struct_env->home);
-		}
+		if (strncmp (struct_env->raw_env[i], "PWD=", 4) == 0)
+			getCurrent(struct_env->raw_env[i], struct_env);	
 	}
-	modifyVar(struct_env, "PWD", struct_env->current_directory);
 	chdir(struct_env->current_directory);
 	return struct_env;
 }

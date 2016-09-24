@@ -1,13 +1,10 @@
-#include "ft.h"
-#include "minishell.h"
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "ft.h"
+#include "minishell.h"
 
 bool applyLibFunction (char *path_to_test, t_function *data, t_env *env)
 {

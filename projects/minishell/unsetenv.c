@@ -1,9 +1,7 @@
-#include "ft.h"
-#include "minishell.h"
 #include <string.h>
 #include <stdlib.h>
-
-
+#include "ft.h"
+#include "minishell.h"
 
 char **getListVar (char *data)   // 27/25/////////////////////////////
 {
@@ -46,12 +44,14 @@ void deleteVar (t_env *env, char *var)
 		size++;
 	new_env = malloc(sizeof(*new_env) * size); 
 	if (new_env == NULL)
-		return;;
+		return;
 	for (i = 0; env->raw_env[i] != NULL; i++) {
 		if (strncmp(env->raw_env[i], var, strlen(var)) != 0){
 			new_env[j] = env->raw_env[i];
 			j++;
 		}
+		else
+			free(env->raw_env[i]);
 	}
 	new_env[size - 1] = NULL;
 	free(env->raw_env);

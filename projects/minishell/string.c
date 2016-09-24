@@ -1,13 +1,8 @@
-#include <stdio.h>
 #include <dirent.h>
-#include "ft.h"
-#include "minishell.h"
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include "ft.h"
+#include "minishell.h"
 
 
 char *addSeparator (char *string)
@@ -20,10 +15,30 @@ char *addSeparator (char *string)
 	return string;
 }
 
+char **copy2D (char **raw_env)
+{
+	char **env = NULL;
+	int i;
+	int size = 0;
+	for(i = 0; raw_env[i] != NULL; i++)
+		size++;
+	env = malloc(sizeof(*env) * (size + 1));
+	if (env == NULL)
+		return NULL;
+	for (i = 0; raw_env[i] != NULL; i++) {
+		size = strlen(raw_env[i]);
+		env[i] = malloc(sizeof(**env) * (size + 1));
+		if (env[i] == NULL)
+			return NULL;
+		env[i] = strcpy(env[i], raw_env[i]);
+		env[i][size] = '\0';
+	}
+	env[i] = NULL;
+	return env;
+}
+
 char *eraseDots (char *str)
 {
-	if (strlen(str) == 1 && str[0] == '.')
-		return str;
 	int i;
 	char *new_str = malloc (sizeof(*new_str) * (strlen(str) + 1));
 	if (new_str == NULL)
@@ -33,14 +48,16 @@ char *eraseDots (char *str)
 		while (str[i] == '.'){
 			if (str[i + 1] == '.'){
 				new_str = previousDir(new_str);
-				if (strlen(new_str) == 1)
+				i = i + 3; //from ../ next dir
+				if (strlen(new_str) == 1 && str[i] == '\0')
 					return new_str;
-				i = i + 2; //from ../ next dir
+				int new_size = strlen(new_str) + strlen(str + i) + 1;
+				new_str = realloc(new_str, new_size);
 			}
 			else if (str[i + 1] == '/' || str[i + 1] == '\0')
 				i = i + 2; //from ./ next dir
-			else 
-				printf("error eraseDots\n");
+			else
+				i++;
 		}
 		strncat (new_str, str + i, 1);
 	}
