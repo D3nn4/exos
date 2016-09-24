@@ -9,29 +9,6 @@
 #include <string.h>
 
 
-
-
-void printPath (t_env *env)
-{
-	int i;
-	for (i = 0; env->paths[i] != NULL; i++) {
-		printf("%s\n", env->paths[i]);
-	}
-}
-
-
-
-char *addPath (char *name, char *path)
-{
-	char *str = malloc(sizeof(*str) * (strlen(name) + strlen(path) + 2)); // +2 => separator + \0
-	str = strcpy(str,path);
-	strcat(str, "/");
-	strcat(str, name);
-	strcat(str, "\0");
-	return str;
-
-}
-
 bool applyLibFunction (char *path_to_test, t_function *data, t_env *env)
 {
 	int return_value = 0;
@@ -59,28 +36,63 @@ bool applyLibFunction (char *path_to_test, t_function *data, t_env *env)
 		return true;
 	return false;
 }
-
+bool noPathFunction (t_function *data, t_env *env)
+{
+	char *path_to_test = NULL;
+	struct stat *buf = NULL;
+	buf = malloc(sizeof(*buf));
+	if (buf == NULL)
+		return NULL;
+	path_to_test = malloc(sizeof(*path_to_test) * (strlen(data->name) + 1));
+	if (path_to_test == NULL)
+		return NULL;
+	path_to_test = strcpy(path_to_test, data->name);
+	path_to_test[strlen(data->name)] = '\0';
+	if(stat(path_to_test, buf) == 0) {
+		applyLibFunction(path_to_test, data, env);
+		free(path_to_test);
+		free(buf);
+		return true;
+	}
+	free(path_to_test);
+	free(buf);
+	return false;
+}
 bool testLibFunction (t_function *data, t_env *env)
 {
 	int i;
 	char *path_to_test = NULL;
-	//printPath(env);
+	struct stat *buf = malloc(sizeof(*buf));;
+	if (buf == NULL)
+		return NULL;
 	for (i = 0; env->paths[i] != NULL; i++) {
-		path_to_test = addPath (data->name, env->paths[i]);
-		struct stat *buf = NULL;
-		buf = malloc(sizeof(*buf));
-		if(stat(path_to_test, buf) == 0) {
-			applyLibFunction(path_to_test, data, env);
-			return true;
-		}
-		free(path_to_test);
-		free(buf);
+			path_to_test = addPath (data->name, env->paths[i]);
+			if(stat(path_to_test, buf) == 0) {
+				applyLibFunction(path_to_test, data, env);
+				free(path_to_test);
+				free(buf);
+				return true;
+			}
+			free(path_to_test);
 	}
-	return false;	
+	free(buf);
+	return false;
 }
 
 bool findLibFunction (t_function *data, t_env *env)
 {
-	return testLibFunction(data, env);
-	
+	struct stat *buf = malloc(sizeof(*buf));;
+	if (buf == NULL)
+		return NULL;
+	if(stat(data->name, buf) == 0) {
+		applyLibFunction(data->name, data, env);
+		free(buf);
+		return true;
+	}
+	else if (env->paths == NULL || env->paths[0] == '\0')
+		return noPathFunction(data, env);
+	else 
+		return testLibFunction(data, env);
+	free(buf);
+	return false;	
 }

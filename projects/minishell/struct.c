@@ -6,10 +6,16 @@
 void freeStructEnv (t_env **env)
 {
 	int i;
-	t_env *struct_env = *env;
-	
-	for (i = 0; struct_env->paths[i]; i++){
-		free(struct_env->paths[i]);
+	t_env *struct_env = *env; 
+	/*
+	for (i = 0; struct_env->raw_env[i]; i++){
+		free(struct_env->raw_env[i]);
+	}
+	*/
+	if (struct_env->paths != NULL){
+		for (i = 0; struct_env->paths[i]; i++){
+			free(struct_env->paths[i]);
+		}
 	}
 	free(struct_env->paths);
 	free(struct_env->home);

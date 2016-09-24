@@ -10,27 +10,20 @@ void addNewVar(t_env *env, char *var, char *value)
 {
 	int size = 0;
 	int i;
-	int str_len = 0;
-	char **new_env = NULL;
+	int str_len = strlen(var);
+	if (value)
+		str_len = strlen(var) + strlen(value);
 	for(i = 0; env->raw_env[i] != NULL; i++)
 		size++;
-	new_env = malloc(sizeof(*new_env) * (size + 2));// +2 => newvalue + NULL
-	if (new_env == NULL){
-		printf("error realloc addVarEnv\n");
+	char **new_env = malloc(sizeof(*new_env) * (size + 2));// +2 => newvalue + NULL
+	if (new_env == NULL)
 		return;
-	}
 	for (i = 0; env->raw_env[i] != NULL; i++) {
 		new_env[i] = env->raw_env[i];
 	}
-	if (value == NULL)
-		str_len = strlen(var);
-	else
-		str_len = strlen(var) + strlen(value);
 	new_env[i] = malloc(sizeof(**new_env) * (str_len + 2)); // +2 => = + '\0'
-	if (new_env[i] == NULL) {
-		printf("error malloc new var addVarEnv\n");
+	if (new_env[i] == NULL) 
 		return;
-	}
 	new_env[i] = strcpy(new_env[i], var);
 	strcat(new_env[i], "=");
 	if (value == NULL)
@@ -39,7 +32,6 @@ void addNewVar(t_env *env, char *var, char *value)
 		strcat(new_env[i], value);
 	new_env[i+1] = NULL;
 	env->raw_env = new_env;
-
 }
 
 void modifyVar (t_env *env, char *var, char *value)
@@ -53,11 +45,18 @@ void modifyVar (t_env *env, char *var, char *value)
 		addNewVar(env, var, value);
 		return;
 	}
-	list[i] = malloc(sizeof(*list[i]) * (strlen(value) + size + 2)); // + 2 for = && \0
+	int value_len = 0;
+	if (value)
+		value_len = strlen(value);
+	list[i] = malloc(sizeof(*list[i]) * (value_len + size + 2)); // + 2 for = && \0
+	if (list[i] == NULL)
+		return;
 	list[i] = strcpy(list[i], var);
 	strcat(list[i], "=");
-	strcat(list[i], value);
-	
+	if (value)
+		strcat(list[i], value);
+	else
+		strcat(list[i], "\0");
 }
 
 bool checkVar (char **list, char *var)
@@ -73,17 +72,15 @@ bool checkVar (char **list, char *var)
 
 void mySetenv (char *data, t_env *env)
 {
-	
 	// si pas d'argument afficher env
 	if (data == NULL){
 		printf("args null setenv\n");
-		displayEnv(env);
+		displayEnv(env->raw_env);
 		return;
 	}
 	// separer nom variable et valeur
 	t_function *var_to_add = NULL;
-	var_to_add = getFunction(data); 
-	printf("%s\n", var_to_add->name);
+	var_to_add = getFunction(data);
 	// verifier si elle existe
 	if (checkVar(env->raw_env, var_to_add->name)) 
 		// si oui modifier contenue 
@@ -93,5 +90,5 @@ void mySetenv (char *data, t_env *env)
 		addNewVar(env, var_to_add->name, var_to_add->args);
 	// exporter vers subshells
 	freeStructFunction (&var_to_add);
-	
+
 }

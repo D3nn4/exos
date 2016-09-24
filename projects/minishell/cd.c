@@ -9,123 +9,106 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-
-char *addSeparator (char *string)
+char *cdAbsolute(char *args)
 {
-	int size = strlen (string);
-	if ((string[size - 1] != '/')){
-		string = realloc (string, sizeof(*string) * (size + 2));
-		strcat(string, "/");
-	}
-	return string;
-}
-
-char *previousDir (char *str)
-{
-	char *new_str = NULL;
-	int size, i,j;
-	size = strlen(str) - 1; //to be on last /
-	i = size;
-	while (str[i - 1] != '/')
-		i--;
-	new_str = malloc (sizeof(*new_str) * (i + 1)); // +1 = Null byte
-	if (new_str == NULL)
-		return NULL;
-	for (j = 0; j < i+1; (new_str[j++] = '\0'));
-	//new_str[0] = '\0';
-	new_str = strncpy(new_str, str, i);
-	//printf("str : %s\n", str);
-	//printf("new_str : %s\n", new_str);
-	free (str);
-	return new_str;
-}
-
-char *eraseDots (char *str)
-{
-	if (strlen(str) == 1 && str[0] == '.')
-		return str;
-	int i;
-	char *new_str = NULL;
-	new_str = malloc (sizeof(*new_str) * (strlen(str) + 1));
-	if (new_str == NULL)
-		return NULL;
-	new_str[0] = '\0';
-	for (i = 0; str[i] != '\0'; i++){
-		while (str[i] == '.'){
-			if (str[i + 1] == '.'){
-				new_str = previousDir(new_str);
-				if (strlen(new_str) == 1)
-					return new_str;
-				i = i + 2; //from ../ next dir
-			}
-			else if (str[i + 1] == '/' || str[i + 1] == '\0')
-				i = i + 2; //from ./ next dir
-			else 
-				printf("error eraseDots\n");
+	char *new_dir = NULL;
+	if (args[0] == '/'){
+		if (isDir(args)){
+			new_dir = malloc(sizeof(*new_dir) * (strlen(args) + 1));
+			if (new_dir == NULL)
+				return NULL;
+			new_dir = strcpy(new_dir, args);
 		}
-		strncat (new_str, str + i, 1);
 	}
-	strncat (new_str, str + i, 1);
-	free (str);
-	return new_str;
+	return new_dir;	
 }
 
-char *isDir (char *args, t_env *env)
-{	
-	if ((strcmp(args, "..") == 0) && strcmp(env->current_directory, "/") == 0 ) 
-		return env->current_directory;
+char *cdRelatif (char *args, t_env *env)
+{
+	int temp_size = 0;
 	char *next_dir = malloc(sizeof(*next_dir) * (strlen(env->current_directory) + 1)); // +1: Null byte
 	next_dir = strcpy(next_dir, env->current_directory);
-	DIR *dir = NULL;
 	next_dir = addSeparator(next_dir);
 	next_dir[strlen(next_dir)] = '\0';
-	if (args[0] == '/')
-		args = args + 1;
-	int temp_size = strlen(next_dir) + strlen(args);
-	char * temp_dir = realloc (next_dir, sizeof(*next_dir) * (temp_size + 1)); // +1: Null byte
-	next_dir = temp_dir;
-	next_dir[temp_size] = '\0';
-	if (next_dir == NULL){
-		printf("error realloc isDir\n");
-		return NULL;
-	}
-	strcat (next_dir, args);
-	next_dir = eraseDots (next_dir);
-	if (strcmp(next_dir, "/") != 0) {
-		dir = opendir (next_dir);
-		if (dir == NULL){
-			closedir (dir);
+	if ((strcmp(args, "..") == 0) && args[0] == '.' && args[1] == '.') 
+		next_dir = previousDir(next_dir);
+	else{
+		if (args[0] == '/')
+			args = args + 1;
+		if (args == NULL)
+			temp_size = strlen(next_dir);
+		else
+			temp_size = strlen(next_dir) + strlen(args);
+		next_dir = realloc (next_dir, sizeof(*next_dir) * (temp_size + 1)); // +1: Null byte
+		if (next_dir == NULL)
 			return NULL;
-		}
-		closedir(dir);
+		if (args != NULL)
+			strcat (next_dir, args);
+		next_dir[temp_size] = '\0';
+		next_dir = eraseDots (next_dir);
+		if(isDir(next_dir) == false)
+			return NULL;
 	}
 	return next_dir;
 }
 
-void cd (char *args, t_env *env)
+void noArgCd (t_env *env)
 {
-	
-	char *new_dir = NULL;
-	if (args == NULL){
-		modifyVar(env, "OLDPWD", env->current_directory);
+	if (checkVar(env->raw_env, "OLDPWD"))
+			modifyVar(env, "OLDPWD", env->current_directory);
+		else
+			addNewVar(env, "OLDPWD", env->current_directory);
 		modifyVar(env, "PWD", env->home);
-		chdir(env->home);
 		env->current_directory = env->home;
 		return;
+}
+
+char *cdOldPwd (char **env)
+{
+	if (checkVar(env, "OLDPWD") == false){
+			printf("minishell: cd: OLDPWD not set\n");
+			return NULL;
 	}
-	else if (strcmp(args, ".") == 0)
+	char *str = NULL;
+	if (checkVar(env, "OLDPWD")){
+		int i;
+		for (i = 0; env[i] != NULL; i++){
+			if (strncmp(env[i], "OLDPWD", 6) == 0){
+				int size = strlen(env[i] + 7);
+				str = malloc(sizeof(*str) * (size + 1));
+				str = strcpy(str, env[i] + 7);
+				break;
+			}
+		}
+	}
+	return str;	
+}
+
+void cd (char *args, t_env *env)
+{
+	char *new_dir = NULL;
+	if (args == NULL){
+		noArgCd(env);
 		return;
-	
-	new_dir = isDir(args, env);
-	if (new_dir != NULL){
-		modifyVar(env, "OLDPWD", env->current_directory);
-		modifyVar(env, "PWD", new_dir);
-		chdir(new_dir);
-		free(env->current_directory);
-		env->current_directory = new_dir;
 	}
-	else
+	if (((strcmp(args, "..") == 0) && (strcmp(env->current_directory, "/") == 0))
+		|| strcmp(args, ".") == 0) 
+		new_dir = env->current_directory;
+	else if (strcmp(args, "-") == 0)
+		new_dir = cdOldPwd(env->raw_env);
+	else{
+		if (((new_dir = cdAbsolute(args)) == NULL))
+			new_dir = cdRelatif(args, env);
+	}
+	if (new_dir == NULL){
 		printf("minishell: cd: %s: No such file or directory\n", args);
-
-
+		return;
+	}
+	if (checkVar(env->raw_env, "OLDPWD"))
+		modifyVar(env, "OLDPWD", env->current_directory);
+	else
+		addNewVar(env, "OLDPWD", env->current_directory);modifyVar(env, "OLDPWD", env->current_directory);
+	modifyVar(env, "PWD", new_dir);
+	free(env->current_directory);
+	env->current_directory = new_dir;
 }
