@@ -40,8 +40,10 @@ char *cdRelatif (char *args, t_env *env)
 			strcat (next_dir, args);
 		next_dir[temp_size] = '\0';
 		next_dir = eraseDots (next_dir);
-		if(isDir(next_dir) == false)
+		if(isDir(next_dir) == false){
+			free(next_dir);
 			return NULL;
+		}
 	}
 	return next_dir;
 }
