@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
-#include "ft.h"
+#include <stdio.h>
 #include "minishell.h"
 
 char *cdAbsolute(char *args)

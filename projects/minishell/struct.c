@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "ft.h"
+#include <stdio.h>
 #include "minishell.h"
 
 void displayEnv (char **env)

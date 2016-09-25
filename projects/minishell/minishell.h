@@ -1,11 +1,6 @@
 #ifndef __HEADER_H__
 #define __HEADER_H__
-
-
 #include <stdbool.h>
-
-
-
 #define SIZE_MAX  4096
 
 typedef struct  s_env {

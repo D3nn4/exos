@@ -1,7 +1,6 @@
 #include <dirent.h>
 #include <string.h>
 #include <stdlib.h>
-#include "ft.h"
 #include "minishell.h"
 
 char *previousDir (char *str)

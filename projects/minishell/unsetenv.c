@@ -1,6 +1,5 @@
 #include <string.h>
 #include <stdlib.h>
-#include "ft.h"
 #include "minishell.h"
 
 char **getListVar (char *data)   // 27/25/////////////////////////////

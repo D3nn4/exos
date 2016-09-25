@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "ft.h"
+#include <stdio.h>
 #include "minishell.h"
 
 void printPath (t_env *env)

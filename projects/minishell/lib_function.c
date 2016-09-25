@@ -3,7 +3,6 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ft.h"
 #include "minishell.h"
 
 bool applyLibFunction (char *path_to_test, t_function *data, t_env *env)
@@ -18,7 +17,6 @@ bool applyLibFunction (char *path_to_test, t_function *data, t_env *env)
 			return_value = WEXITSTATUS(status_wait);
 	}
 	if (father == 0){
-		//printf("%s\n", path_to_test);
 		if (data->args == NULL){
 			char *argv[2] = {"ls", NULL};
 			return_value = execve (path_to_test, argv, env->raw_env);

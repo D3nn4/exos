@@ -1,7 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "ft.h"
 #include "minishell.h"
 
 char **getPaths (char *string)
