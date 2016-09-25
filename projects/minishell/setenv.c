@@ -20,6 +20,7 @@ void addNewVar(t_env *env, char *var, char *value)
 	for (i = 0; env->raw_env[i] != NULL; i++) {
 		new_env[i] = env->raw_env[i];
 	}
+	new_env[i+1] = NULL;
 	new_env[i] = malloc(sizeof(**new_env) * (str_len + 2)); // +2 => = + '\0'
 	if (new_env[i] == NULL) 
 		return;
@@ -28,7 +29,7 @@ void addNewVar(t_env *env, char *var, char *value)
 	if (value != NULL)
 		strcat(new_env[i], value);
 	strcat(new_env[i], "\0");
-	new_env[i+1] = NULL;
+	free(env->raw_env);
 	env->raw_env = new_env;
 }
 
@@ -46,6 +47,7 @@ void modifyVar (t_env *env, char *var, char *value)
 	int value_len = 0;
 	if (value)
 		value_len = strlen(value);
+	free(list[i]);
 	list[i] = malloc(sizeof(*list[i]) * (value_len + size + 2)); // + 2 for = && \0
 	if (list[i] == NULL)
 		return;

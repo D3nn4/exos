@@ -53,7 +53,9 @@ void noArgCd (t_env *env)
 		else
 			addNewVar(env, "OLDPWD", env->current_directory);
 		modifyVar(env, "PWD", env->home);
-		env->current_directory = env->home;
+
+		free(env->current_directory);
+		env->current_directory = strdup(env->home);
 		return;
 }
 
