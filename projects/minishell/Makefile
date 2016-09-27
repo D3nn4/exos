@@ -8,7 +8,7 @@ HEADER = .
 all : $(NAME)
 
 $(NAME) : 
-	gcc -ggdb3 -Wall -Wextra -I$(HEADER) -I$(LIB_DIR) -c $(SRC)
+	gcc -ggdb3 -Wall -Wextra -I$(HEADER) -c $(SRC)
 	gcc -o $(NAME)   *.o 
 
 clean : 

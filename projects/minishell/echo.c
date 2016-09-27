@@ -1,4 +1,4 @@
-#include "ft.h"
+#include <stdio.h>
 #include "minishell.h"
 
 void echo (char *args)
